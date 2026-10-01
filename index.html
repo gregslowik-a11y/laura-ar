@@ -14,6 +14,120 @@
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
+<script>
+AFRAME.registerComponent("play-gltf-animation", {
+
+  schema: {
+    clip: {
+      type: "string",
+      default: ""
+    }
+  },
+
+  init: function () {
+
+    this.mixer = null;
+    this.action = null;
+    this.playing = false;
+
+    this.el.addEventListener(
+      "model-loaded",
+      (e) => {
+
+        const model =
+          e.detail.model;
+
+        const animations =
+          model.animations || [];
+
+        if (!animations.length) {
+          console.log("Model nie ma animacji");
+          return;
+        }
+
+        let clip = null;
+
+        if (this.data.clip) {
+
+          clip =
+            THREE.AnimationClip.findByName(
+              animations,
+              this.data.clip
+            );
+
+        }
+
+        if (!clip) {
+          clip = animations[0];
+        }
+
+        this.mixer =
+          new THREE.AnimationMixer(
+            model
+          );
+
+        this.action =
+          this.mixer.clipAction(
+            clip
+          );
+
+        this.action.setLoop(
+          THREE.LoopRepeat,
+          Infinity
+        );
+
+        console.log(
+          "Animacja modelu gotowa:",
+          clip.name
+        );
+
+      }
+    );
+
+  },
+
+  start: function () {
+
+    if (!this.action) {
+      return;
+    }
+
+    this.action.stop();
+    this.action.reset();
+    this.action.play();
+
+    this.playing = true;
+
+  },
+
+  stop: function () {
+
+    if (this.action) {
+      this.action.stop();
+    }
+
+    this.playing = false;
+
+  },
+
+  tick: function (time, delta) {
+
+    if (
+      this.mixer &&
+      this.playing
+    ) {
+
+      this.mixer.update(
+        delta / 1000
+      );
+
+    }
+
+  }
+
+});
+</script>
+
 <style>
 
 html,
@@ -242,6 +356,11 @@ body > video {
   <img id="img19" src="./assets/19.jpg">
   <img id="img20" src="./assets/20.jpg">
 
+  <a-asset-item
+    id="fireworksModel"
+    src="./models/fireworks.glb">
+  </a-asset-item>
+
 </a-assets>
 
 
@@ -253,7 +372,19 @@ body > video {
 
 <a-entity
   id="target"
-  mindar-image-target="targetIndex: 0">
+  mindar-image-target="targetIndex: 0"
+>
+
+  <a-entity
+    id="fireworks"
+    gltf-model="#fireworksModel"
+    play-gltf-animation="clip: Object_0"
+    position="0 0.12 0.34"
+    rotation="0 0 0"
+    scale="0 0 0"
+    visible="false">
+  </a-entity>
+
 </a-entity>
 
 
@@ -267,6 +398,9 @@ const scene =
 
 const target =
   document.getElementById("target");
+
+const fireworks =
+  document.getElementById("fireworks");
 
 const startScreen =
   document.getElementById("startScreen");
@@ -309,7 +443,7 @@ const images = [
 
 /*
 ====================================
-ROZMIESZCZENIE 20 POLAROIDÓW
+OBECNY UKŁAD ZDJĘĆ — BEZ ZMIAN
 ====================================
 */
 
@@ -352,15 +486,21 @@ let confettiPieces = [];
 
 
 function sleep(ms) {
+
   return new Promise(
     resolve =>
       setTimeout(resolve, ms)
   );
+
 }
 
 
 function randomRange(min, max) {
-  return min + Math.random() * (max - min);
+
+  return min +
+    Math.random() *
+    (max - min);
+
 }
 
 
@@ -375,7 +515,9 @@ function clearCards() {
   cards.forEach(card => {
 
     if (card.parentNode) {
+
       card.parentNode.removeChild(card);
+
     }
 
   });
@@ -390,12 +532,42 @@ function clearConfetti() {
   confettiPieces.forEach(piece => {
 
     if (piece.parentNode) {
+
       piece.parentNode.removeChild(piece);
+
     }
 
   });
 
   confettiPieces = [];
+
+}
+
+
+function resetFireworks() {
+
+  const player =
+    fireworks.components[
+      "play-gltf-animation"
+    ];
+
+  if (player) {
+    player.stop();
+  }
+
+  fireworks.removeAttribute(
+    "animation__show"
+  );
+
+  fireworks.setAttribute(
+    "visible",
+    false
+  );
+
+  fireworks.setAttribute(
+    "scale",
+    "0 0 0"
+  );
 
 }
 
@@ -479,10 +651,6 @@ function createPolaroid(
   );
 
 
-  /*
-  CIEŃ
-  */
-
   const shadow =
     document.createElement(
       "a-plane"
@@ -519,10 +687,6 @@ function createPolaroid(
   );
 
 
-  /*
-  BIAŁA RAMKA
-  */
-
   const frame =
     document.createElement(
       "a-plane"
@@ -558,10 +722,6 @@ function createPolaroid(
     "shader: flat"
   );
 
-
-  /*
-  ZDJĘCIE
-  */
 
   const picture =
     document.createElement(
@@ -615,8 +775,7 @@ function createPolaroid(
 
 /*
 ====================================
-RZUT WSZYSTKICH POLAROIDÓW
-JEDNYM RUCHEM
+RZUT WSZYSTKICH ZDJĘĆ
 ====================================
 */
 
@@ -630,11 +789,6 @@ function throwCard(
     0.035 +
     index * 0.0025;
 
-
-  /*
-  WSPÓLNY PUNKT STARTOWY
-  - prawa dolna część
-  */
 
   const throwX =
     0.52 +
@@ -660,21 +814,12 @@ function throwCard(
     );
 
 
-  /*
-  MAŁE RÓŻNICE CZASU
-  tworzą efekt jednego zamachu
-  */
-
   const delay =
     randomRange(
       0,
       170
     );
 
-
-  /*
-  LOSOWY OBRÓT PODCZAS LOTU
-  */
 
   const startRot =
     layout.r +
@@ -702,10 +847,6 @@ function throwCard(
   );
 
 
-  /*
-  LOT
-  */
-
   card.setAttribute(
     "animation__throw",
     {
@@ -732,10 +873,6 @@ function throwCard(
   );
 
 
-  /*
-  ZMNIEJSZENIE
-  */
-
   card.setAttribute(
     "animation__scale",
     {
@@ -761,10 +898,6 @@ function throwCard(
     }
   );
 
-
-  /*
-  OBRÓT DO FINALNEGO POŁOŻENIA
-  */
 
   card.setAttribute(
     "animation__rotation",
@@ -796,7 +929,7 @@ function throwCard(
 
 /*
 ====================================
-KOLOROWE CONFETTI
+CONFETTI — BEZ ZMIAN
 ====================================
 */
 
@@ -837,7 +970,6 @@ function launchConfetti() {
 
 
     const color =
-
       colors[
         Math.floor(
           Math.random() *
@@ -1094,7 +1226,9 @@ function launchConfetti() {
     () => {
 
       if (tracking) {
+
         launchSecondBurst();
+
       }
 
     },
@@ -1233,8 +1367,7 @@ function launchSecondBurst() {
 
 
     const delay =
-      Math.random() *
-      450;
+      Math.random() * 450;
 
 
     piece.setAttribute(
@@ -1252,8 +1385,7 @@ function launchSecondBurst() {
 
         dur:
           1800 +
-          Math.random() *
-          900,
+          Math.random() * 900,
 
         delay:
           delay,
@@ -1323,7 +1455,77 @@ function launchSecondBurst() {
 
 /*
 ====================================
-START - WSZYSTKIE ZDJĘCIA NARAZ
+FAJERWERKI GLB
+====================================
+*/
+
+function launchFireworks() {
+
+  if (!tracking) {
+    return;
+  }
+
+
+  resetFireworks();
+
+
+  fireworks.setAttribute(
+    "visible",
+    true
+  );
+
+
+  fireworks.setAttribute(
+    "scale",
+    "0.01 0.01 0.01"
+  );
+
+
+  fireworks.setAttribute(
+    "animation__show",
+    {
+
+      property:
+        "scale",
+
+      from:
+        "0.01 0.01 0.01",
+
+      to:
+        "0.22 0.22 0.22",
+
+      dur:
+        700,
+
+      easing:
+        "easeOutBack"
+
+    }
+  );
+
+
+  setTimeout(
+    () => {
+
+      const player =
+        fireworks.components[
+          "play-gltf-animation"
+        ];
+
+      if (player) {
+        player.start();
+      }
+
+    },
+    300
+  );
+
+}
+
+
+/*
+====================================
+START
 ====================================
 */
 
@@ -1344,11 +1546,8 @@ async function startPolaroids() {
 
   clearCards();
   clearConfetti();
+  resetFireworks();
 
-
-  /*
-  NAJPIERW TWORZYMY WSZYSTKIE KARTY
-  */
 
   const preparedCards = [];
 
@@ -1408,8 +1607,7 @@ async function startPolaroids() {
 
 
   /*
-  A TERAZ RZUCAMY WSZYSTKIE
-  PRAWIE JEDNOCZEŚNIE
+  WSZYSTKIE ZDJĘCIA NARAZ
   */
 
   preparedCards.forEach(item => {
@@ -1422,10 +1620,6 @@ async function startPolaroids() {
 
   });
 
-
-  /*
-  CZEKAMY, AŻ WYLĄDUJĄ
-  */
 
   await sleep(
     1500
@@ -1442,6 +1636,25 @@ async function startPolaroids() {
   ) {
 
     launchConfetti();
+
+  }
+
+
+  /*
+  FAJERWERKI CHWILĘ PÓŹNIEJ
+  */
+
+  await sleep(
+    1600
+  );
+
+
+  if (
+    tracking &&
+    currentRun === runId
+  ) {
+
+    launchFireworks();
 
   }
 
@@ -1534,6 +1747,7 @@ target.addEventListener(
 
     clearCards();
     clearConfetti();
+    resetFireworks();
 
 
     hint.style.display =
