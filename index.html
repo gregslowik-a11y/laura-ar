@@ -1,475 +1,743 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
-<meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
->
+  <meta charset="UTF-8">
 
-<title>Laura AR</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+  >
 
-<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <title>Laura AR</title>
 
-<style>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
-html,
-body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: transparent !important;
-  font-family: Arial, sans-serif;
-}
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-a-scene {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: transparent !important;
-}
 
-canvas {
-  background: transparent !important;
-}
+  <style>
 
-video.mindar-video,
-body > video {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: cover !important;
-  z-index: -1 !important;
-}
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent !important;
+      font-family: Arial, sans-serif;
+    }
 
-#startScreen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+    a-scene {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent !important;
+    }
 
-  background: linear-gradient(
-    180deg,
-    #ff4fa0,
-    #805cff
-  );
+    canvas {
+      background: transparent !important;
+    }
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    video.mindar-video,
+    body > video {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      object-fit: cover !important;
+      z-index: -1 !important;
+    }
 
-  color: white;
-  text-align: center;
+    #startScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
 
-  padding: 25px;
-  box-sizing: border-box;
-}
+      background: linear-gradient(
+        180deg,
+        #ff4fa0,
+        #805cff
+      );
 
-#startBox {
-  max-width: 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-  background: rgba(255,255,255,0.15);
+      color: white;
+      text-align: center;
 
-  padding: 25px;
+      padding: 25px;
+      box-sizing: border-box;
+    }
 
-  border-radius: 25px;
-}
+    #startBox {
+      max-width: 420px;
 
-#startBtn {
-  border: none;
+      background: rgba(255,255,255,0.15);
 
-  background: white;
-  color: black;
+      padding: 25px;
 
-  font-size: 18px;
-  font-weight: bold;
+      border-radius: 25px;
+    }
 
-  padding: 15px 30px;
+    #startBox h1 {
+      margin-top: 0;
+      font-size: 34px;
+    }
 
-  border-radius: 50px;
-}
+    #startBox p {
+      font-size: 18px;
+      line-height: 1.5;
+    }
 
-#hint {
-  position: fixed;
+    #startBtn {
+      border: none;
 
-  left: 50%;
-  bottom: 20px;
+      background: white;
+      color: black;
 
-  transform: translateX(-50%);
+      font-size: 18px;
+      font-weight: bold;
 
-  z-index: 9998;
+      padding: 15px 30px;
 
-  display: none;
+      border-radius: 50px;
 
-  background: rgba(0,0,0,0.6);
+      cursor: pointer;
+    }
 
-  color: white;
+    #hint {
+      position: fixed;
 
-  padding: 10px 18px;
+      left: 50%;
+      bottom: 20px;
 
-  border-radius: 25px;
+      transform: translateX(-50%);
 
-  text-align: center;
+      z-index: 9998;
 
-  width: 80%;
-}
+      display: none;
 
-</style>
+      background: rgba(0,0,0,0.6);
+
+      color: white;
+
+      padding: 10px 18px;
+
+      border-radius: 25px;
+
+      text-align: center;
+
+      width: 80%;
+    }
+
+  </style>
 
 </head>
 
+
 <body>
 
-<div id="startScreen">
 
-  <div id="startBox">
+  <!-- EKRAN STARTOWY -->
 
-    <h1>Ożyw ten album 💖</h1>
+  <div id="startScreen">
 
-    <p>
-      Kliknij START AR.<br><br>
-      Zezwól na aparat.<br><br>
-      Skieruj telefon na całą stronę
-      „OŻYW TEN ALBUM!”.
-    </p>
+    <div id="startBox">
 
-    <button id="startBtn">
-      START AR
-    </button>
+      <h1>
+        Ożyw ten album 💖
+      </h1>
+
+      <p>
+
+        Kliknij START AR.
+
+        <br><br>
+
+        Zezwól na dostęp do aparatu.
+
+        <br><br>
+
+        Skieruj telefon na całą stronę
+        „OŻYW TEN ALBUM!”.
+
+      </p>
+
+      <button id="startBtn">
+        START AR
+      </button>
+
+    </div>
 
   </div>
 
-</div>
 
+  <!-- PODPOWIEDŹ -->
 
-<div id="hint">
-  Skieruj telefon na całą stronę i trzymaj stabilnie 📸
-</div>
+  <div id="hint">
+    Skieruj telefon na całą stronę i trzymaj stabilnie 📸
+  </div>
 
 
-<a-scene
 
-  mindar-image="
-    imageTargetSrc: ./targets.mind;
-    autoStart: false;
-    uiScanning: yes;
-    uiLoading: yes;
-  "
+  <!-- SCENA AR -->
 
-  color-space="sRGB"
+  <a-scene
 
-  renderer="
-    colorManagement: true;
-    physicallyCorrectLights: true;
-    alpha: true;
-  "
+    mindar-image="
+      imageTargetSrc: ./targets.mind;
+      autoStart: false;
+      uiScanning: yes;
+      uiLoading: yes;
+    "
 
-  vr-mode-ui="enabled: false"
+    color-space="sRGB"
 
-  device-orientation-permission-ui="enabled: false"
+    renderer="
+      colorManagement: true;
+      physicallyCorrectLights: true;
+      alpha: true;
+    "
 
-  embedded
->
+    vr-mode-ui="
+      enabled: false
+    "
 
+    device-orientation-permission-ui="
+      enabled: false
+    "
 
-<a-assets>
+    embedded
 
-  <img id="img1" src="./assets/01.jpg">
-  <img id="img2" src="./assets/02.jpg">
-  <img id="img3" src="./assets/03.jpg">
-  <img id="img4" src="./assets/04.jpg">
-  <img id="img5" src="./assets/05.jpg">
-  <img id="img6" src="./assets/06.jpg">
-  <img id="img7" src="./assets/07.jpg">
-  <img id="img8" src="./assets/08.jpg">
-  <img id="img9" src="./assets/09.jpg">
-  <img id="img10" src="./assets/10.jpg">
-  <img id="img11" src="./assets/11.jpg">
-  <img id="img12" src="./assets/12.jpg">
-  <img id="img13" src="./assets/13.jpg">
-  <img id="img14" src="./assets/14.jpg">
-  <img id="img15" src="./assets/15.jpg">
+  >
 
-</a-assets>
 
+    <!-- ZDJĘCIA -->
 
-<a-camera
-  position="0 0 0"
-  look-controls="enabled: false">
-</a-camera>
+    <a-assets>
 
+      <img id="img1" src="./assets/01.jpg">
+      <img id="img2" src="./assets/02.jpg">
+      <img id="img3" src="./assets/03.jpg">
+      <img id="img4" src="./assets/04.jpg">
+      <img id="img5" src="./assets/05.jpg">
+      <img id="img6" src="./assets/06.jpg">
+      <img id="img7" src="./assets/07.jpg">
+      <img id="img8" src="./assets/08.jpg">
+      <img id="img9" src="./assets/09.jpg">
+      <img id="img10" src="./assets/10.jpg">
+      <img id="img11" src="./assets/11.jpg">
+      <img id="img12" src="./assets/12.jpg">
+      <img id="img13" src="./assets/13.jpg">
+      <img id="img14" src="./assets/14.jpg">
+      <img id="img15" src="./assets/15.jpg">
 
-<a-entity
-  id="target"
-  mindar-image-target="targetIndex: 0"
->
+    </a-assets>
 
-  <a-image
-    id="photo1"
-    visible="false"
-    position="0 0 0.06">
-  </a-image>
 
-</a-entity>
+    <!-- KAMERA -->
 
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false">
+    </a-camera>
 
-</a-scene>
 
+    <!-- MARKER -->
 
-<script>
+    <a-entity
+      id="target"
+      mindar-image-target="targetIndex: 0"
+    >
 
-const scene =
-  document.querySelector("a-scene");
+      <a-image
 
-const target =
-  document.getElementById("target");
+        id="photo"
 
-const photo =
-  document.getElementById("photo1");
+        visible="false"
 
-const button =
-  document.getElementById("startBtn");
+        position="0 0 0.06"
 
-const startScreen =
-  document.getElementById("startScreen");
+        material="
+          transparent: true;
+          opacity: 1;
+          shader: flat;
+        "
 
-const hint =
-  document.getElementById("hint");
+      ></a-image>
 
+    </a-entity>
 
-const images = [
 
-  document.getElementById("img1"),
-  document.getElementById("img2"),
-  document.getElementById("img3"),
-  document.getElementById("img4"),
-  document.getElementById("img5"),
-  document.getElementById("img6"),
-  document.getElementById("img7"),
-  document.getElementById("img8"),
-  document.getElementById("img9"),
-  document.getElementById("img10"),
-  document.getElementById("img11"),
-  document.getElementById("img12"),
-  document.getElementById("img13"),
-  document.getElementById("img14"),
-  document.getElementById("img15")
+  </a-scene>
 
-];
 
 
-let number = 0;
+  <script>
 
-let timer = null;
+    const scene =
+      document.querySelector("a-scene");
 
-let tracking = false;
+    const target =
+      document.getElementById("target");
 
+    const photo =
+      document.getElementById("photo");
 
-button.addEventListener(
-  "click",
-  async () => {
+    const button =
+      document.getElementById("startBtn");
 
-    startScreen.style.display = "none";
+    const startScreen =
+      document.getElementById("startScreen");
 
-    hint.style.display = "block";
+    const hint =
+      document.getElementById("hint");
 
-    await scene
-      .systems["mindar-image-system"]
-      .start();
 
-  }
-);
+    const images = [
 
+      document.getElementById("img1"),
+      document.getElementById("img2"),
+      document.getElementById("img3"),
+      document.getElementById("img4"),
+      document.getElementById("img5"),
+      document.getElementById("img6"),
+      document.getElementById("img7"),
+      document.getElementById("img8"),
+      document.getElementById("img9"),
+      document.getElementById("img10"),
+      document.getElementById("img11"),
+      document.getElementById("img12"),
+      document.getElementById("img13"),
+      document.getElementById("img14"),
+      document.getElementById("img15")
 
-function setSize(img) {
+    ];
 
-  const w =
-    img.naturalWidth;
 
-  const h =
-    img.naturalHeight;
+    let tracking = false;
 
-  const ratio =
-    w / h;
+    let slideshowRunning = false;
 
+    let runNumber = 0;
 
-  const maxWidth =
-    0.48;
 
-  const maxHeight =
-    0.55;
 
+    button.addEventListener(
+      "click",
+      async () => {
 
-  let width;
+        startScreen.style.display =
+          "none";
 
-  let height;
+        hint.style.display =
+          "block";
 
+        await scene
+          .systems["mindar-image-system"]
+          .start();
 
-  if (ratio > 1) {
+      }
+    );
 
-    width =
-      maxWidth;
 
-    height =
-      width / ratio;
 
-  }
+    function sleep(ms) {
 
-  else {
-
-    height =
-      maxHeight;
-
-    width =
-      height * ratio;
-
-  }
-
-
-  photo.setAttribute(
-    "width",
-    width
-  );
-
-  photo.setAttribute(
-    "height",
-    height
-  );
-
-}
-
-
-function showImage() {
-
-  if (!tracking) return;
-
-
-  const img =
-    images[number];
-
-
-  setSize(img);
-
-
-  photo.setAttribute(
-    "src",
-    "#" + img.id
-  );
-
-
-  photo.setAttribute(
-    "visible",
-    true
-  );
-
-
-  photo.setAttribute(
-    "scale",
-    "0.25 0.25 0.25"
-  );
-
-
-  photo.removeAttribute(
-    "animation__zoom"
-  );
-
-
-  photo.setAttribute(
-    "animation__zoom",
-    {
-      property: "scale",
-      from: "0.25 0.25 0.25",
-      to: "1.1 1.1 1.1",
-      dur: 2600,
-      easing: "easeOutCubic"
-    }
-  );
-
-
-  clearTimeout(timer);
-
-
-  timer =
-    setTimeout(() => {
-
-      photo.setAttribute(
-        "visible",
-        false
+      return new Promise(
+        resolve =>
+          setTimeout(resolve, ms)
       );
 
+    }
 
-      number++;
 
 
-      if (
-        number >= images.length
-      ) {
+    function setSize(img) {
 
-        number = 0;
+      const w =
+        img.naturalWidth;
+
+      const h =
+        img.naturalHeight;
+
+
+      if (!w || !h) {
+
+        return;
 
       }
 
 
-      setTimeout(
-        showImage,
-        250
+      const ratio =
+        w / h;
+
+
+      const maxWidth =
+        0.48;
+
+      const maxHeight =
+        0.55;
+
+
+      let width;
+
+      let height;
+
+
+      if (ratio >= 1) {
+
+        width =
+          maxWidth;
+
+        height =
+          width / ratio;
+
+
+        if (height > maxHeight) {
+
+          height =
+            maxHeight;
+
+          width =
+            height * ratio;
+
+        }
+
+      }
+
+      else {
+
+        height =
+          maxHeight;
+
+        width =
+          height * ratio;
+
+
+        if (width > maxWidth) {
+
+          width =
+            maxWidth;
+
+          height =
+            width / ratio;
+
+        }
+
+      }
+
+
+      photo.setAttribute(
+        "width",
+        width
       );
 
-    }, 2900);
+      photo.setAttribute(
+        "height",
+        height
+      );
 
-}
-
-
-target.addEventListener(
-  "targetFound",
-  () => {
-
-    tracking = true;
-
-    hint.style.display =
-      "none";
+    }
 
 
-    clearTimeout(timer);
+
+    async function startSlideshow() {
+
+      if (slideshowRunning) {
+
+        return;
+
+      }
 
 
-    number = 0;
+      slideshowRunning =
+        true;
 
 
-    showImage();
-
-  }
-);
+      const thisRun =
+        ++runNumber;
 
 
-target.addEventListener(
-  "targetLost",
-  () => {
-
-    tracking = false;
-
-    clearTimeout(timer);
+      for (
+        let i = 0;
+        i < images.length;
+        i++
+      ) {
 
 
-    photo.setAttribute(
-      "visible",
-      false
+        if (
+          !tracking ||
+          thisRun !== runNumber
+        ) {
+
+          break;
+
+        }
+
+
+        const img =
+          images[i];
+
+
+        photo.removeAttribute(
+          "animation__zoom"
+        );
+
+
+        photo.removeAttribute(
+          "animation__fade"
+        );
+
+
+        photo.setAttribute(
+          "visible",
+          false
+        );
+
+
+        photo.setAttribute(
+          "material",
+          "opacity",
+          0
+        );
+
+
+        await sleep(250);
+
+
+        if (
+          !tracking ||
+          thisRun !== runNumber
+        ) {
+
+          break;
+
+        }
+
+
+        setSize(img);
+
+
+        photo.setAttribute(
+          "src",
+          "#" + img.id
+        );
+
+
+        photo.setAttribute(
+          "scale",
+          "0.20 0.20 0.20"
+        );
+
+
+        photo.setAttribute(
+          "position",
+          "0 0 0.06"
+        );
+
+
+        photo.setAttribute(
+          "material",
+          "opacity",
+          1
+        );
+
+
+        photo.setAttribute(
+          "visible",
+          true
+        );
+
+
+        photo.setAttribute(
+          "animation__zoom",
+          {
+
+            property:
+              "scale",
+
+            from:
+              "0.20 0.20 0.20",
+
+            to:
+              "1.10 1.10 1.10",
+
+            dur:
+              2400,
+
+            easing:
+              "easeOutCubic"
+
+          }
+        );
+
+
+        await sleep(2600);
+
+
+        if (
+          !tracking ||
+          thisRun !== runNumber
+        ) {
+
+          break;
+
+        }
+
+
+        photo.removeAttribute(
+          "animation__fade"
+        );
+
+
+        photo.setAttribute(
+          "animation__fade",
+          {
+
+            property:
+              "material.opacity",
+
+            from:
+              1,
+
+            to:
+              0,
+
+            dur:
+              500,
+
+            easing:
+              "linear"
+
+          }
+        );
+
+
+        await sleep(550);
+
+
+        photo.setAttribute(
+          "visible",
+          false
+        );
+
+
+        photo.removeAttribute(
+          "animation__zoom"
+        );
+
+
+        photo.removeAttribute(
+          "animation__fade"
+        );
+
+
+        await sleep(250);
+
+      }
+
+
+      slideshowRunning =
+        false;
+
+
+      if (
+        tracking &&
+        thisRun === runNumber
+      ) {
+
+        await sleep(500);
+
+        startSlideshow();
+
+      }
+
+    }
+
+
+
+    target.addEventListener(
+      "targetFound",
+      () => {
+
+
+        if (tracking) {
+
+          return;
+
+        }
+
+
+        tracking =
+          true;
+
+
+        hint.style.display =
+          "none";
+
+
+        startSlideshow();
+
+      }
     );
 
 
-    hint.style.display =
-      "block";
 
-  }
-);
+    target.addEventListener(
+      "targetLost",
+      () => {
 
-</script>
+
+        tracking =
+          false;
+
+
+        runNumber++;
+
+
+        slideshowRunning =
+          false;
+
+
+        photo.removeAttribute(
+          "animation__zoom"
+        );
+
+
+        photo.removeAttribute(
+          "animation__fade"
+        );
+
+
+        photo.setAttribute(
+          "visible",
+          false
+        );
+
+
+        photo.setAttribute(
+          "material",
+          "opacity",
+          0
+        );
+
+
+        hint.style.display =
+          "block";
+
+      }
+    );
+
+  </script>
+
 
 </body>
+
 </html>
