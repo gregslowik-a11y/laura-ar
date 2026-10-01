@@ -14,120 +14,6 @@
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script>
-AFRAME.registerComponent("play-gltf-animation", {
-
-  schema: {
-    clip: {
-      type: "string",
-      default: ""
-    }
-  },
-
-  init: function () {
-
-    this.mixer = null;
-    this.action = null;
-    this.playing = false;
-
-    this.el.addEventListener(
-      "model-loaded",
-      (e) => {
-
-        const model =
-          e.detail.model;
-
-        const animations =
-          model.animations || [];
-
-        if (!animations.length) {
-          console.log("Model nie ma animacji");
-          return;
-        }
-
-        let clip = null;
-
-        if (this.data.clip) {
-
-          clip =
-            THREE.AnimationClip.findByName(
-              animations,
-              this.data.clip
-            );
-
-        }
-
-        if (!clip) {
-          clip = animations[0];
-        }
-
-        this.mixer =
-          new THREE.AnimationMixer(
-            model
-          );
-
-        this.action =
-          this.mixer.clipAction(
-            clip
-          );
-
-        this.action.setLoop(
-          THREE.LoopRepeat,
-          Infinity
-        );
-
-        console.log(
-          "Animacja modelu gotowa:",
-          clip.name
-        );
-
-      }
-    );
-
-  },
-
-  start: function () {
-
-    if (!this.action) {
-      return;
-    }
-
-    this.action.stop();
-    this.action.reset();
-    this.action.play();
-
-    this.playing = true;
-
-  },
-
-  stop: function () {
-
-    if (this.action) {
-      this.action.stop();
-    }
-
-    this.playing = false;
-
-  },
-
-  tick: function (time, delta) {
-
-    if (
-      this.mixer &&
-      this.playing
-    ) {
-
-      this.mixer.update(
-        delta / 1000
-      );
-
-    }
-
-  }
-
-});
-</script>
-
 <style>
 
 html,
@@ -192,6 +78,7 @@ body > video {
 
 #startBox {
   max-width: 420px;
+
   padding: 28px;
 
   border-radius: 28px;
@@ -356,11 +243,6 @@ body > video {
   <img id="img19" src="./assets/19.jpg">
   <img id="img20" src="./assets/20.jpg">
 
-  <a-asset-item
-    id="fireworksModel"
-    src="./models/fireworks.glb">
-  </a-asset-item>
-
 </a-assets>
 
 
@@ -372,19 +254,7 @@ body > video {
 
 <a-entity
   id="target"
-  mindar-image-target="targetIndex: 0"
->
-
-  <a-entity
-    id="fireworks"
-    gltf-model="#fireworksModel"
-    play-gltf-animation="clip: Object_0"
-    position="0 0.12 0.34"
-    rotation="0 0 0"
-    scale="0 0 0"
-    visible="false">
-  </a-entity>
-
+  mindar-image-target="targetIndex: 0">
 </a-entity>
 
 
@@ -393,14 +263,12 @@ body > video {
 
 <script>
 
+
 const scene =
   document.querySelector("a-scene");
 
 const target =
   document.getElementById("target");
-
-const fireworks =
-  document.getElementById("fireworks");
 
 const startScreen =
   document.getElementById("startScreen");
@@ -443,7 +311,7 @@ const images = [
 
 /*
 ====================================
-OBECNY UKŁAD ZDJĘĆ — BEZ ZMIAN
+UKŁAD ZDJĘĆ
 ====================================
 */
 
@@ -544,37 +412,9 @@ function clearConfetti() {
 }
 
 
-function resetFireworks() {
-
-  const player =
-    fireworks.components[
-      "play-gltf-animation"
-    ];
-
-  if (player) {
-    player.stop();
-  }
-
-  fireworks.removeAttribute(
-    "animation__show"
-  );
-
-  fireworks.setAttribute(
-    "visible",
-    false
-  );
-
-  fireworks.setAttribute(
-    "scale",
-    "0 0 0"
-  );
-
-}
-
-
 /*
 ====================================
-POLAROID
+POLAROID 3D
 ====================================
 */
 
@@ -592,7 +432,9 @@ function createPolaroid(
 
 
   if (!w || !h) {
+
     return null;
+
   }
 
 
@@ -625,18 +467,22 @@ function createPolaroid(
   }
 
 
+  /*
+  TROCHĘ GRUBSZA RAMKA
+  */
+
   const frameWidth =
 
     Math.max(
-      photoWidth + 0.040,
-      0.185
+      photoWidth + 0.055,
+      0.195
     );
 
 
   const frameHeight =
 
     photoHeight +
-    0.070;
+    0.085;
 
 
   const card =
@@ -651,6 +497,10 @@ function createPolaroid(
   );
 
 
+  /*
+  DELIKATNY CIEŃ
+  */
+
   const shadow =
     document.createElement(
       "a-plane"
@@ -659,13 +509,13 @@ function createPolaroid(
 
   shadow.setAttribute(
     "width",
-    frameWidth + 0.015
+    frameWidth + 0.026
   );
 
 
   shadow.setAttribute(
     "height",
-    frameHeight + 0.015
+    frameHeight + 0.026
   );
 
 
@@ -677,15 +527,65 @@ function createPolaroid(
 
   shadow.setAttribute(
     "position",
-    "0.010 -0.010 -0.004"
+    "0.015 -0.017 -0.012"
   );
 
 
   shadow.setAttribute(
     "material",
-    "shader: flat; transparent: true; opacity: 0.20"
+    "shader: flat; transparent: true; opacity: 0.22"
   );
 
+
+  /*
+  CIENKA WARSTWA 3D
+  */
+
+  const depth =
+    document.createElement(
+      "a-box"
+    );
+
+
+  depth.setAttribute(
+    "width",
+    frameWidth
+  );
+
+
+  depth.setAttribute(
+    "height",
+    frameHeight
+  );
+
+
+  depth.setAttribute(
+    "depth",
+    "0.012"
+  );
+
+
+  depth.setAttribute(
+    "color",
+    "#e5e1da"
+  );
+
+
+  depth.setAttribute(
+    "position",
+    "0 -0.015 -0.003"
+  );
+
+
+  depth.setAttribute(
+    "material",
+    "shader: flat"
+  );
+
+
+  /*
+  FRONT RAMKI
+  */
 
   const frame =
     document.createElement(
@@ -713,7 +613,7 @@ function createPolaroid(
 
   frame.setAttribute(
     "position",
-    "0 -0.014 0"
+    "0 -0.015 0.005"
   );
 
 
@@ -722,6 +622,10 @@ function createPolaroid(
     "shader: flat"
   );
 
+
+  /*
+  ZDJĘCIE
+  */
 
   const picture =
     document.createElement(
@@ -749,7 +653,7 @@ function createPolaroid(
 
   picture.setAttribute(
     "position",
-    "0 0.010 0.003"
+    "0 0.012 0.010"
   );
 
 
@@ -759,13 +663,31 @@ function createPolaroid(
   );
 
 
-  card.appendChild(shadow);
-  card.appendChild(frame);
-  card.appendChild(picture);
+  card.appendChild(
+    shadow
+  );
 
-  target.appendChild(card);
+  card.appendChild(
+    depth
+  );
 
-  cards.push(card);
+  card.appendChild(
+    frame
+  );
+
+  card.appendChild(
+    picture
+  );
+
+
+  target.appendChild(
+    card
+  );
+
+
+  cards.push(
+    card
+  );
 
 
   return card;
@@ -775,7 +697,7 @@ function createPolaroid(
 
 /*
 ====================================
-RZUT WSZYSTKICH ZDJĘĆ
+RZUT WSZYSTKICH ZDJĘĆ NARAZ
 ====================================
 */
 
@@ -929,7 +851,7 @@ function throwCard(
 
 /*
 ====================================
-CONFETTI — BEZ ZMIAN
+DŁUGIE CONFETTI
 ====================================
 */
 
@@ -954,9 +876,13 @@ function launchConfetti() {
   ];
 
 
+  /*
+  WIĘCEJ ELEMENTÓW
+  */
+
   for (
     let i = 0;
-    i < 100;
+    i < 120;
     i++
   ) {
 
@@ -970,6 +896,7 @@ function launchConfetti() {
 
 
     const color =
+
       colors[
         Math.floor(
           Math.random() *
@@ -1001,9 +928,9 @@ function launchConfetti() {
 
 
     const endY =
-      -0.70 +
+      -0.75 +
       Math.random() *
-      1.75;
+      1.90;
 
 
     const endZ =
@@ -1074,13 +1001,18 @@ function launchConfetti() {
 
 
     const rx =
-      Math.random() * 360;
+      Math.random() *
+      360;
+
 
     const ry =
-      Math.random() * 360;
+      Math.random() *
+      360;
+
 
     const rz =
-      Math.random() * 360;
+      Math.random() *
+      360;
 
 
     piece.setAttribute(
@@ -1105,14 +1037,24 @@ function launchConfetti() {
     );
 
 
+    /*
+    DŁUŻSZE CZASY
+    */
+
     const delay =
-      Math.random() * 650;
+      Math.random() *
+      800;
 
 
     const duration =
-      2200 +
-      Math.random() * 1800;
+      4200 +
+      Math.random() *
+      2600;
 
+
+    /*
+    RUCH
+    */
 
     piece.setAttribute(
       "animation__move",
@@ -1140,6 +1082,10 @@ function launchConfetti() {
     );
 
 
+    /*
+    POJAWIENIE
+    */
+
     piece.setAttribute(
       "animation__grow",
       {
@@ -1154,7 +1100,7 @@ function launchConfetti() {
           "1 1 1",
 
         dur:
-          250,
+          300,
 
         delay:
           delay,
@@ -1165,6 +1111,10 @@ function launchConfetti() {
       }
     );
 
+
+    /*
+    OBRÓT
+    */
 
     piece.setAttribute(
       "animation__spin",
@@ -1177,7 +1127,7 @@ function launchConfetti() {
           `${rx} ${ry} ${rz}`,
 
         to:
-          `${rx + 720} ${ry + 540} ${rz + 1080}`,
+          `${rx + 1080} ${ry + 720} ${rz + 1440}`,
 
         dur:
           duration,
@@ -1191,6 +1141,10 @@ function launchConfetti() {
       }
     );
 
+
+    /*
+    POWOLNE ZNIKANIE
+    */
 
     piece.setAttribute(
       "animation__fade",
@@ -1206,12 +1160,12 @@ function launchConfetti() {
           0,
 
         dur:
-          900,
+          1600,
 
         delay:
           delay +
           duration -
-          850,
+          1500,
 
         easing:
           "linear"
@@ -1221,6 +1175,10 @@ function launchConfetti() {
 
   }
 
+
+  /*
+  DRUGA FALA PO 1.5 SEK.
+  */
 
   setTimeout(
     () => {
@@ -1232,7 +1190,25 @@ function launchConfetti() {
       }
 
     },
-    1100
+    1500
+  );
+
+
+  /*
+  TRZECIA FALA
+  */
+
+  setTimeout(
+    () => {
+
+      if (tracking) {
+
+        launchThirdBurst();
+
+      }
+
+    },
+    3400
   );
 
 }
@@ -1262,7 +1238,7 @@ function launchSecondBurst() {
 
   for (
     let i = 0;
-    i < 45;
+    i < 50;
     i++
   ) {
 
@@ -1367,7 +1343,14 @@ function launchSecondBurst() {
 
 
     const delay =
-      Math.random() * 450;
+      Math.random() *
+      650;
+
+
+    const duration =
+      3600 +
+      Math.random() *
+      1800;
 
 
     piece.setAttribute(
@@ -1384,8 +1367,7 @@ function launchSecondBurst() {
           `${endX} ${endY} ${endZ}`,
 
         dur:
-          1800 +
-          Math.random() * 900,
+          duration,
 
         delay:
           delay,
@@ -1408,10 +1390,10 @@ function launchSecondBurst() {
           "0 0 0",
 
         to:
-          "360 720 720",
+          "720 1080 1080",
 
         dur:
-          2200,
+          duration,
 
         delay:
           delay,
@@ -1437,10 +1419,12 @@ function launchSecondBurst() {
           0,
 
         dur:
-          700,
+          1400,
 
         delay:
-          delay + 1600,
+          delay +
+          duration -
+          1300,
 
         easing:
           "linear"
@@ -1455,77 +1439,221 @@ function launchSecondBurst() {
 
 /*
 ====================================
-FAJERWERKI GLB
+TRZECIA FALA CONFETTI
 ====================================
 */
 
-function launchFireworks() {
-
-  if (!tracking) {
-    return;
-  }
+function launchThirdBurst() {
 
 
-  resetFireworks();
+  const colors = [
+
+    "#ff9100",
+    "#ffd600",
+    "#00e676",
+    "#00b0ff",
+    "#651fff",
+    "#ff4081",
+    "#ffffff"
+
+  ];
 
 
-  fireworks.setAttribute(
-    "visible",
-    true
-  );
+  for (
+    let i = 0;
+    i < 45;
+    i++
+  ) {
 
 
-  fireworks.setAttribute(
-    "scale",
-    "0.01 0.01 0.01"
-  );
+    const piece =
+      document.createElement(
+        "a-plane"
+      );
 
 
-  fireworks.setAttribute(
-    "animation__show",
-    {
-
-      property:
-        "scale",
-
-      from:
-        "0.01 0.01 0.01",
-
-      to:
-        "0.22 0.22 0.22",
-
-      dur:
-        700,
-
-      easing:
-        "easeOutBack"
-
-    }
-  );
+    const startX =
+      (Math.random() - 0.5) *
+      0.65;
 
 
-  setTimeout(
-    () => {
+    const startY =
+      0.05 +
+      Math.random() *
+      0.15;
 
-      const player =
-        fireworks.components[
-          "play-gltf-animation"
-        ];
 
-      if (player) {
-        player.start();
+    const startZ =
+      0.18;
+
+
+    const endX =
+      startX +
+      (Math.random() - 0.5) *
+      0.85;
+
+
+    const endY =
+      -0.60 +
+      Math.random() *
+      1.50;
+
+
+    const endZ =
+      0.05 +
+      Math.random() *
+      0.18;
+
+
+    const size =
+      0.012 +
+      Math.random() *
+      0.018;
+
+
+    piece.setAttribute(
+      "width",
+      size
+    );
+
+
+    piece.setAttribute(
+      "height",
+      size * 2
+    );
+
+
+    piece.setAttribute(
+      "color",
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ]
+    );
+
+
+    piece.setAttribute(
+      "material",
+      "shader: flat; transparent: true; opacity: 1; side: double"
+    );
+
+
+    piece.setAttribute(
+      "position",
+      `${startX} ${startY} ${startZ}`
+    );
+
+
+    target.appendChild(
+      piece
+    );
+
+
+    confettiPieces.push(
+      piece
+    );
+
+
+    const delay =
+      Math.random() *
+      500;
+
+
+    const duration =
+      3200 +
+      Math.random() *
+      1600;
+
+
+    piece.setAttribute(
+      "animation__move",
+      {
+
+        property:
+          "position",
+
+        from:
+          `${startX} ${startY} ${startZ}`,
+
+        to:
+          `${endX} ${endY} ${endZ}`,
+
+        dur:
+          duration,
+
+        delay:
+          delay,
+
+        easing:
+          "easeOutCubic"
+
       }
+    );
 
-    },
-    300
-  );
+
+    piece.setAttribute(
+      "animation__spin",
+      {
+
+        property:
+          "rotation",
+
+        from:
+          "0 0 0",
+
+        to:
+          "720 720 1080",
+
+        dur:
+          duration,
+
+        delay:
+          delay,
+
+        easing:
+          "linear"
+
+      }
+    );
+
+
+    piece.setAttribute(
+      "animation__fade",
+      {
+
+        property:
+          "material.opacity",
+
+        from:
+          1,
+
+        to:
+          0,
+
+        dur:
+          1300,
+
+        delay:
+          delay +
+          duration -
+          1200,
+
+        easing:
+          "linear"
+
+      }
+    );
+
+  }
 
 }
 
 
 /*
 ====================================
-START
+START ZDJĘĆ
 ====================================
 */
 
@@ -1533,11 +1661,14 @@ async function startPolaroids() {
 
 
   if (playing) {
+
     return;
+
   }
 
 
-  playing = true;
+  playing =
+    true;
 
 
   const currentRun =
@@ -1546,11 +1677,14 @@ async function startPolaroids() {
 
   clearCards();
   clearConfetti();
-  resetFireworks();
 
 
   const preparedCards = [];
 
+
+  /*
+  TWORZYMY WSZYSTKIE
+  */
 
   for (
     let i = 0;
@@ -1563,7 +1697,9 @@ async function startPolaroids() {
       !tracking ||
       currentRun !== runId
     ) {
+
       break;
+
     }
 
 
@@ -1576,8 +1712,11 @@ async function startPolaroids() {
       await new Promise(
         resolve => {
 
-          img.onload = resolve;
-          img.onerror = resolve;
+          img.onload =
+            resolve;
+
+          img.onerror =
+            resolve;
 
         }
       );
@@ -1596,9 +1735,16 @@ async function startPolaroids() {
     if (card) {
 
       preparedCards.push({
-        card: card,
-        layout: layouts[i],
-        index: i
+
+        card:
+          card,
+
+        layout:
+          layouts[i],
+
+        index:
+          i
+
       });
 
     }
@@ -1607,19 +1753,25 @@ async function startPolaroids() {
 
 
   /*
-  WSZYSTKIE ZDJĘCIA NARAZ
+  RZUT WSZYSTKICH NARAZ
   */
 
-  preparedCards.forEach(item => {
+  preparedCards.forEach(
+    item => {
 
-    throwCard(
-      item.card,
-      item.layout,
-      item.index
-    );
+      throwCard(
+        item.card,
+        item.layout,
+        item.index
+      );
 
-  });
+    }
+  );
 
+
+  /*
+  CZEKAMY AŻ WYLĄDUJĄ
+  */
 
   await sleep(
     1500
@@ -1640,26 +1792,8 @@ async function startPolaroids() {
   }
 
 
-  /*
-  FAJERWERKI CHWILĘ PÓŹNIEJ
-  */
-
-  await sleep(
-    1600
-  );
-
-
-  if (
-    tracking &&
-    currentRun === runId
-  ) {
-
-    launchFireworks();
-
-  }
-
-
-  playing = false;
+  playing =
+    false;
 
 }
 
@@ -1705,7 +1839,9 @@ target.addEventListener(
 
 
     if (tracking) {
+
       return;
+
     }
 
 
@@ -1747,7 +1883,6 @@ target.addEventListener(
 
     clearCards();
     clearConfetti();
-    resetFireworks();
 
 
     hint.style.display =
