@@ -1,1416 +1,561 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
->
-
-<title>Laura AR Polaroid</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Laura AR Polaroid Party</title>
 
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-
 <style>
-
-html,
-body {
+html, body {
   margin: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-
   background: transparent !important;
-
   font-family: Arial, sans-serif;
 }
 
-
 a-scene {
   position: fixed !important;
-
   top: 0 !important;
   left: 0 !important;
-
   width: 100% !important;
   height: 100% !important;
-
   background: transparent !important;
 }
-
 
 canvas {
   background: transparent !important;
 }
 
-
 video.mindar-video,
 body > video {
-
   position: fixed !important;
-
   top: 0 !important;
   left: 0 !important;
-
   width: 100vw !important;
   height: 100vh !important;
-
   object-fit: cover !important;
-
   z-index: -1 !important;
 }
 
-
 #startScreen {
-
   position: fixed;
-
   inset: 0;
-
   z-index: 9999;
-
   display: flex;
-
   justify-content: center;
-
   align-items: center;
-
   padding: 25px;
-
   box-sizing: border-box;
-
   color: white;
-
   text-align: center;
-
-  background:
-
-    linear-gradient(
-      180deg,
-      #ff4fa0,
-      #805cff
-    );
-
+  background: linear-gradient(180deg, #ff4fa0, #805cff);
 }
-
 
 #startBox {
-
   width: 100%;
-
   max-width: 420px;
-
   padding: 28px;
-
   box-sizing: border-box;
-
   border-radius: 25px;
-
-  background:
-
-    rgba(
-      255,
-      255,
-      255,
-      0.15
-    );
-
+  background: rgba(255,255,255,0.15);
 }
-
 
 #startBox h1 {
-
   margin-top: 0;
-
   font-size: 34px;
-
 }
-
 
 #startBox p {
-
   font-size: 18px;
-
   line-height: 1.5;
-
 }
-
 
 #startBtn {
-
   border: none;
-
   background: white;
-
   color: black;
-
   padding: 15px 30px;
-
   border-radius: 50px;
-
   font-size: 18px;
-
   font-weight: bold;
-
   cursor: pointer;
-
 }
-
 
 #hint {
-
   position: fixed;
-
   left: 50%;
-
   bottom: 20px;
-
   transform: translateX(-50%);
-
   z-index: 9998;
-
   display: none;
-
   width: 80%;
-
   padding: 10px 18px;
-
   box-sizing: border-box;
-
   background: rgba(0,0,0,0.65);
-
   color: white;
-
   border-radius: 25px;
-
   text-align: center;
-
   font-size: 14px;
-
 }
-
 </style>
-
 </head>
-
-
 
 <body>
 
-
-<!-- EKRAN STARTOWY -->
-
-
 <div id="startScreen">
-
   <div id="startBox">
-
-    <h1>
-      Ożyw ten album 💖
-    </h1>
-
-
+    <h1>Ożyw ten album 💖</h1>
     <p>
-
-      Kliknij START AR.
-
-      <br><br>
-
-      Zezwól na dostęp do aparatu.
-
-      <br><br>
-
+      Kliknij START AR.<br><br>
+      Zezwól na dostęp do aparatu.<br><br>
       Skieruj telefon na całą stronę
-
-      <b>
-        „OŻYW TEN ALBUM!”
-      </b>
-
+      <b>„OŻYW TEN ALBUM!”</b>
     </p>
-
-
-    <button id="startBtn">
-
-      START AR
-
-    </button>
-
+    <button id="startBtn">START AR</button>
   </div>
-
 </div>
-
-
 
 <div id="hint">
-
   Skieruj telefon na całą stronę i trzymaj stabilnie 📸
-
 </div>
 
-
-
-
-<!-- AR -->
-
-
 <a-scene
-
-  mindar-image="
-    imageTargetSrc: ./targets.mind;
-    autoStart: false;
-    uiScanning: yes;
-    uiLoading: yes;
-  "
-
+  mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiScanning: yes; uiLoading: yes;"
   color-space="sRGB"
-
-  renderer="
-    colorManagement: true;
-    physicallyCorrectLights: true;
-    alpha: true;
-  "
-
-  vr-mode-ui="
-    enabled: false
-  "
-
-  device-orientation-permission-ui="
-    enabled: false
-  "
-
+  renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
   embedded
-
 >
 
-
-<!-- ZDJĘCIA -->
-
-
 <a-assets>
-
   <img id="img1" src="./assets/01.jpg">
   <img id="img2" src="./assets/02.jpg">
   <img id="img3" src="./assets/03.jpg">
   <img id="img4" src="./assets/04.jpg">
   <img id="img5" src="./assets/05.jpg">
-
   <img id="img6" src="./assets/06.jpg">
   <img id="img7" src="./assets/07.jpg">
   <img id="img8" src="./assets/08.jpg">
   <img id="img9" src="./assets/09.jpg">
   <img id="img10" src="./assets/10.jpg">
-
   <img id="img11" src="./assets/11.jpg">
   <img id="img12" src="./assets/12.jpg">
   <img id="img13" src="./assets/13.jpg">
   <img id="img14" src="./assets/14.jpg">
   <img id="img15" src="./assets/15.jpg">
-
+  <img id="img16" src="./assets/16.jpg">
+  <img id="img17" src="./assets/17.jpg">
+  <img id="img18" src="./assets/18.jpg">
+  <img id="img19" src="./assets/19.jpg">
+  <img id="img20" src="./assets/20.jpg">
 </a-assets>
 
+<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-
-<a-camera
-
-  position="0 0 0"
-
-  look-controls="
-    enabled: false
-  "
-
-></a-camera>
-
-
-
-
-<!-- MARKER -->
-
-
-<a-entity
-
-  id="target"
-
-  mindar-image-target="
-    targetIndex: 0
-  "
-
->
-
-
-<!--
-POLAROIDY ZOSTANĄ
-DODANE TUTAJ
-AUTOMATYCZNIE
--->
-
-
-</a-entity>
-
+<a-entity id="target" mindar-image-target="targetIndex: 0"></a-entity>
 
 </a-scene>
 
-
-
-
 <script>
-
-
-const scene =
-  document.querySelector(
-    "a-scene"
-  );
-
-
-const target =
-  document.getElementById(
-    "target"
-  );
-
-
-const button =
-  document.getElementById(
-    "startBtn"
-  );
-
-
-const startScreen =
-  document.getElementById(
-    "startScreen"
-  );
-
-
-const hint =
-  document.getElementById(
-    "hint"
-  );
-
-
-
-
-/*
-========================================
-ZDJĘCIA
-========================================
-*/
-
+const scene = document.querySelector("a-scene");
+const target = document.getElementById("target");
+const button = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
+const hint = document.getElementById("hint");
 
 const images = [
-
   document.getElementById("img1"),
   document.getElementById("img2"),
   document.getElementById("img3"),
   document.getElementById("img4"),
   document.getElementById("img5"),
-
   document.getElementById("img6"),
   document.getElementById("img7"),
   document.getElementById("img8"),
   document.getElementById("img9"),
   document.getElementById("img10"),
-
   document.getElementById("img11"),
   document.getElementById("img12"),
   document.getElementById("img13"),
   document.getElementById("img14"),
-  document.getElementById("img15")
-
+  document.getElementById("img15"),
+  document.getElementById("img16"),
+  document.getElementById("img17"),
+  document.getElementById("img18"),
+  document.getElementById("img19"),
+  document.getElementById("img20")
 ];
-
-
-
-
-/*
-========================================
-ROZMIESZCZENIE POLAROIDÓW
-
-Każdy ma własne miejsce.
-
-x = lewo / prawo
-y = góra / dół
-rotation = obrót
-========================================
-*/
-
 
 const layouts = [
-
-
-  {
-    x: -0.40,
-    y: 0.56,
-    r: -10
-  },
-
-
-  {
-    x: -0.11,
-    y: 0.57,
-    r: 6
-  },
-
-
-  {
-    x: 0.22,
-    y: 0.55,
-    r: -5
-  },
-
-
-  {
-    x: 0.43,
-    y: 0.35,
-    r: 9
-  },
-
-
-  {
-    x: -0.43,
-    y: 0.30,
-    r: 8
-  },
-
-
-  {
-    x: -0.13,
-    y: 0.29,
-    r: -6
-  },
-
-
-  {
-    x: 0.16,
-    y: 0.28,
-    r: 7
-  },
-
-
-  {
-    x: -0.39,
-    y: 0.02,
-    r: -8
-  },
-
-
-  {
-    x: -0.10,
-    y: 0.02,
-    r: 4
-  },
-
-
-  {
-    x: 0.20,
-    y: 0.02,
-    r: -5
-  },
-
-
-  {
-    x: 0.43,
-    y: -0.10,
-    r: 8
-  },
-
-
-  {
-    x: -0.40,
-    y: -0.28,
-    r: 6
-  },
-
-
-  {
-    x: -0.12,
-    y: -0.30,
-    r: -7
-  },
-
-
-  {
-    x: 0.18,
-    y: -0.31,
-    r: 5
-  },
-
-
-  {
-    x: 0.02,
-    y: -0.57,
-    r: -3
-  }
-
+  {x:-0.42, y:0.58, r:-10},
+  {x:-0.14, y:0.60, r:7},
+  {x:0.17, y:0.59, r:-5},
+  {x:0.42, y:0.47, r:9},
+  {x:-0.44, y:0.34, r:8},
+  {x:-0.16, y:0.33, r:-6},
+  {x:0.15, y:0.33, r:5},
+  {x:0.43, y:0.21, r:-7},
+  {x:-0.42, y:0.08, r:-8},
+  {x:-0.14, y:0.08, r:5},
+  {x:0.16, y:0.08, r:-4},
+  {x:0.43, y:-0.04, r:8},
+  {x:-0.43, y:-0.20, r:6},
+  {x:-0.15, y:-0.22, r:-7},
+  {x:0.16, y:-0.23, r:5},
+  {x:0.41, y:-0.20, r:-5},
+  {x:-0.33, y:-0.47, r:8},
+  {x:-0.03, y:-0.52, r:-4},
+  {x:0.28, y:-0.48, r:6},
+  {x:0.02, y:-0.70, r:-2}
 ];
 
-
-
-
 let tracking = false;
-
-
 let playing = false;
-
-
 let runId = 0;
-
-
 let cards = [];
-
-
-
+let partyItems = [];
 
 function sleep(ms) {
-
-  return new Promise(
-
-    resolve =>
-
-      setTimeout(
-        resolve,
-        ms
-      )
-
-  );
-
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
-
-
-/*
-========================================
-USUWANIE STARYCH POLAROIDÓW
-========================================
-*/
-
 
 function clearCards() {
-
-
-  cards.forEach(
-
-    card => {
-
-
-      if (
-        card.parentNode
-      ) {
-
-        card.parentNode
-          .removeChild(card);
-
-      }
-
-
-    }
-
-  );
-
-
+  cards.forEach(card => {
+    if (card.parentNode) card.parentNode.removeChild(card);
+  });
   cards = [];
-
 }
 
+function clearParty() {
+  partyItems.forEach(item => {
+    if (item.parentNode) item.parentNode.removeChild(item);
+  });
+  partyItems = [];
+}
 
+function clearAllAR() {
+  clearCards();
+  clearParty();
+}
 
+function createPolaroid(img, layout, index) {
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  if (!w || !h) return null;
 
-/*
-========================================
-TWORZENIE POLAROIDA
-========================================
-*/
-
-
-function createPolaroid(
-  img,
-  layout,
-  index
-) {
-
-
-  const w =
-    img.naturalWidth;
-
-
-  const h =
-    img.naturalHeight;
-
-
-
-
-  if (
-    !w ||
-    !h
-  ) {
-
-    return null;
-
-  }
-
-
-
-
-  const ratio =
-    w / h;
-
-
-
-
-  /*
-  ROZMIAR SAMEGO ZDJĘCIA
-  */
-
+  const ratio = w / h;
 
   let photoWidth;
-
   let photoHeight;
 
-
-
-
-  if (
-    ratio >= 1
-  ) {
-
-
-    /*
-    POZIOME
-    */
-
-
-    photoWidth =
-      0.205;
-
-
-    photoHeight =
-      photoWidth /
-      ratio;
-
-
+  if (ratio >= 1) {
+    photoWidth = 0.19;
+    photoHeight = photoWidth / ratio;
+  } else {
+    photoHeight = 0.19;
+    photoWidth = photoHeight * ratio;
   }
 
-
-  else {
-
-
-    /*
-    PIONOWE
-    */
-
-
-    photoHeight =
-      0.205;
-
-
-    photoWidth =
-      photoHeight *
-      ratio;
-
-
-  }
-
-
-
-
-  /*
-  MINIMALNA SZEROKOŚĆ,
-  ŻEBY POLAROID NIE BYŁ
-  ZBYT WĄSKI
-  */
-
-
-  const frameWidth =
-
-    Math.max(
-      photoWidth + 0.035,
-      0.145
-    );
-
-
-
-
-  /*
-  BIAŁY DÓŁ POLAROIDA
-  JEST WIĘKSZY
-  */
-
-
-  const frameHeight =
-
-    photoHeight +
-    0.065;
-
-
-
-
-  /*
-  CAŁY POLAROID
-  */
-
-
-  const card =
-    document.createElement(
-      "a-entity"
-    );
-
-
-
-
-  card.setAttribute(
-
-    "position",
-
-    `${layout.x} ${layout.y} ${0.035 + index * 0.002}`
-
-  );
-
-
-
-
-  card.setAttribute(
-
-    "rotation",
-
-    `0 0 ${layout.r}`
-
-  );
-
-
-
-
-  card.setAttribute(
-
-    "scale",
-
-    "0 0 0"
-
-  );
-
-
-
-
-  /*
-  BIAŁA RAMKA
-  */
-
-
-  const frame =
-    document.createElement(
-      "a-plane"
-    );
-
-
-
-
-  frame.setAttribute(
-    "width",
-    frameWidth
-  );
-
-
-  frame.setAttribute(
-    "height",
-    frameHeight
-  );
-
-
-  frame.setAttribute(
-    "color",
-    "#ffffff"
-  );
-
-
-  frame.setAttribute(
-
-    "position",
-
-    `0 ${-0.015} 0`
-
-  );
-
-
-
-
-  frame.setAttribute(
-
-    "material",
-
-    "shader: flat"
-
-  );
-
-
-
-
-  /*
-  ZDJĘCIE
-  */
-
-
-  const picture =
-    document.createElement(
-      "a-image"
-    );
-
-
-
-
-  picture.setAttribute(
-
-    "src",
-
-    "#" + img.id
-
-  );
-
-
-
-
-  picture.setAttribute(
-
-    "width",
-
-    photoWidth
-
-  );
-
-
-
-
-  picture.setAttribute(
-
-    "height",
-
-    photoHeight
-
-  );
-
-
-
-
-  /*
-  LEKKO WYŻEJ,
-  ŻEBY ZOSTAŁ
-  BIAŁY PASEK NA DOLE
-  */
-
-
-  picture.setAttribute(
-
-    "position",
-
-    `0 0.010 0.002`
-
-  );
-
-
-
-
-  picture.setAttribute(
-
-    "material",
-
-    "shader: flat"
-
-  );
-
-
-
-
-  card.appendChild(
-    frame
-  );
-
-
-  card.appendChild(
-    picture
-  );
-
-
-  target.appendChild(
-    card
-  );
-
-
-  cards.push(
-    card
-  );
-
-
+  const frameWidth = Math.max(photoWidth + 0.035, 0.145);
+  const frameHeight = photoHeight + 0.065;
+
+  const card = document.createElement("a-entity");
+  card.setAttribute("position", `${layout.x} ${layout.y} ${0.035 + index * 0.002}`);
+  card.setAttribute("rotation", `0 0 ${layout.r}`);
+  card.setAttribute("scale", "0 0 0");
+
+  const frame = document.createElement("a-plane");
+  frame.setAttribute("width", frameWidth);
+  frame.setAttribute("height", frameHeight);
+  frame.setAttribute("color", "#ffffff");
+  frame.setAttribute("position", `0 ${-0.015} 0`);
+  frame.setAttribute("material", "shader: flat");
+
+  const picture = document.createElement("a-image");
+  picture.setAttribute("src", "#" + img.id);
+  picture.setAttribute("width", photoWidth);
+  picture.setAttribute("height", photoHeight);
+  picture.setAttribute("position", `0 0.010 0.002`);
+  picture.setAttribute("material", "shader: flat");
+
+  card.appendChild(frame);
+  card.appendChild(picture);
+  target.appendChild(card);
+  cards.push(card);
 
   return card;
-
 }
 
+function dropCard(card, layout, index) {
+  card.setAttribute("position", `${layout.x} ${layout.y + 0.14} ${0.30 + index * 0.003}`);
+  card.setAttribute("rotation", `0 0 ${layout.r - 10}`);
+  card.setAttribute("scale", "1.35 1.35 1.35");
 
+  card.setAttribute("animation__drop", {
+    property: "position",
+    from: `${layout.x} ${layout.y + 0.14} ${0.30 + index * 0.003}`,
+    to: `${layout.x} ${layout.y} ${0.035 + index * 0.002}`,
+    dur: 850,
+    easing: "easeOutBounce"
+  });
 
+  card.setAttribute("animation__scale", {
+    property: "scale",
+    from: "1.35 1.35 1.35",
+    to: "1 1 1",
+    dur: 850,
+    easing: "easeOutCubic"
+  });
 
-/*
-========================================
-ANIMACJA WPADANIA POLAROIDA
+  card.setAttribute("animation__rotate", {
+    property: "rotation",
+    from: `0 0 ${layout.r - 10}`,
+    to: `0 0 ${layout.r}`,
+    dur: 850,
+    easing: "easeOutCubic"
+  });
+}
 
-Wygląda jak zdjęcie
-spadające na stół.
-========================================
-*/
+function create3DText() {
+  const wrap = document.createElement("a-entity");
+  wrap.setAttribute("position", "0 0.88 0.12");
+  wrap.setAttribute("scale", "0 0 0");
 
+  const back = document.createElement("a-text");
+  back.setAttribute("value", "SZCZESLIWEJ 18, LAURA!");
+  back.setAttribute("align", "center");
+  back.setAttribute("color", "#9c5a00");
+  back.setAttribute("width", "2.2");
+  back.setAttribute("position", "0.018 -0.018 0");
 
-async function dropCard(
-  card,
-  layout,
-  index,
-  currentRun
-) {
+  const mid = document.createElement("a-text");
+  mid.setAttribute("value", "SZCZESLIWEJ 18, LAURA!");
+  mid.setAttribute("align", "center");
+  mid.setAttribute("color", "#d89a1f");
+  mid.setAttribute("width", "2.2");
+  mid.setAttribute("position", "0.009 -0.009 0.01");
 
+  const front = document.createElement("a-text");
+  front.setAttribute("value", "SZCZESLIWEJ 18, LAURA!");
+  front.setAttribute("align", "center");
+  front.setAttribute("color", "#ffd76a");
+  front.setAttribute("width", "2.2");
+  front.setAttribute("position", "0 0 0.02");
 
-  if (
-    !tracking ||
-    currentRun !== runId
-  ) {
+  wrap.appendChild(back);
+  wrap.appendChild(mid);
+  wrap.appendChild(front);
+  target.appendChild(wrap);
+  partyItems.push(wrap);
 
-    return;
+  wrap.setAttribute("animation__show", {
+    property: "scale",
+    from: "0 0 0",
+    to: "1 1 1",
+    dur: 900,
+    easing: "easeOutBack"
+  });
 
+  wrap.setAttribute("animation__float", {
+    property: "position",
+    from: "0 0.88 0.12",
+    to: "0 0.92 0.14",
+    dir: "alternate",
+    loop: true,
+    dur: 1600,
+    easing: "easeInOutSine"
+  });
+}
+
+function createConfettiBurst() {
+  const colors = ["#ffd700", "#ff4fa0", "#6b5cff", "#ffffff", "#00d7ff"];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement("a-plane");
+    const startX = (Math.random() * 0.6) - 0.3;
+    const startY = 0.75 + (Math.random() * 0.2);
+    const endX = startX + ((Math.random() * 0.8) - 0.4);
+    const endY = startY - (0.55 + Math.random() * 0.35);
+    const rot = Math.floor(Math.random() * 360);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    piece.setAttribute("width", 0.028);
+    piece.setAttribute("height", 0.012);
+    piece.setAttribute("color", color);
+    piece.setAttribute("position", `${startX} ${startY} 0.18`);
+    piece.setAttribute("rotation", `0 0 ${rot}`);
+    piece.setAttribute("material", "shader: flat; opacity: 1");
+    target.appendChild(piece);
+    partyItems.push(piece);
+
+    piece.setAttribute("animation__fall", {
+      property: "position",
+      from: `${startX} ${startY} 0.18`,
+      to: `${endX} ${endY} 0.05`,
+      dur: 2600 + Math.floor(Math.random() * 1200),
+      easing: "easeOutCubic"
+    });
+
+    piece.setAttribute("animation__spin", {
+      property: "rotation",
+      from: `0 0 ${rot}`,
+      to: `0 0 ${rot + 720}`,
+      dur: 2600 + Math.floor(Math.random() * 1200),
+      easing: "linear"
+    });
+
+    piece.setAttribute("animation__fade", {
+      property: "material.opacity",
+      from: 1,
+      to: 0,
+      dur: 3200,
+      easing: "linear"
+    });
   }
-
-
-
-
-  /*
-  START:
-
-  większe,
-  wyżej nad kartką,
-  lekko bardziej obrócone
-  */
-
-
-  card.setAttribute(
-
-    "position",
-
-    `${layout.x} ${layout.y + 0.14} ${0.30 + index * 0.003}`
-
-  );
-
-
-  card.setAttribute(
-
-    "rotation",
-
-    `0 0 ${layout.r - 10}`
-
-  );
-
-
-  card.setAttribute(
-
-    "scale",
-
-    "1.35 1.35 1.35"
-
-  );
-
-
-
-
-  /*
-  SPADANIE NA KARTKĘ
-  */
-
-
-  card.setAttribute(
-
-    "animation__drop",
-
-    {
-
-      property:
-        "position",
-
-      from:
-        `${layout.x} ${layout.y + 0.14} ${0.30 + index * 0.003}`,
-
-      to:
-        `${layout.x} ${layout.y} ${0.035 + index * 0.002}`,
-
-      dur:
-        850,
-
-      easing:
-        "easeOutBounce"
-
-    }
-
-  );
-
-
-
-
-  /*
-  ZMNIEJSZENIE
-  */
-
-
-  card.setAttribute(
-
-    "animation__scale",
-
-    {
-
-      property:
-        "scale",
-
-      from:
-        "1.35 1.35 1.35",
-
-      to:
-        "1 1 1",
-
-      dur:
-        850,
-
-      easing:
-        "easeOutCubic"
-
-    }
-
-  );
-
-
-
-
-  /*
-  DELIKATNY OBRÓT
-  */
-
-
-  card.setAttribute(
-
-    "animation__rotate",
-
-    {
-
-      property:
-        "rotation",
-
-      from:
-        `0 0 ${layout.r - 10}`,
-
-      to:
-        `0 0 ${layout.r}`,
-
-      dur:
-        850,
-
-      easing:
-        "easeOutCubic"
-
-    }
-
-  );
-
 }
 
+function createChampagneSide(x, side) {
+  const wrap = document.createElement("a-entity");
+  wrap.setAttribute("position", `${x} -0.62 0.12`);
+  wrap.setAttribute("rotation", `0 0 ${side === "left" ? -18 : 18}`);
+  wrap.setAttribute("scale", "0 0 0");
 
+  const bottle = document.createElement("a-cylinder");
+  bottle.setAttribute("radius", "0.045");
+  bottle.setAttribute("height", "0.19");
+  bottle.setAttribute("color", "#2d6b3d");
+  bottle.setAttribute("position", "0 0 0");
 
+  const neck = document.createElement("a-cylinder");
+  neck.setAttribute("radius", "0.018");
+  neck.setAttribute("height", "0.06");
+  neck.setAttribute("color", "#2d6b3d");
+  neck.setAttribute("position", "0 0.12 0");
 
-/*
-========================================
-ROZSYPYWANIE 15 ZDJĘĆ
-========================================
-*/
+  const foil = document.createElement("a-cylinder");
+  foil.setAttribute("radius", "0.02");
+  foil.setAttribute("height", "0.03");
+  foil.setAttribute("color", "#d9b347");
+  foil.setAttribute("position", "0 0.15 0");
 
+  wrap.appendChild(bottle);
+  wrap.appendChild(neck);
+  wrap.appendChild(foil);
+  target.appendChild(wrap);
+  partyItems.push(wrap);
+
+  wrap.setAttribute("animation__show", {
+    property: "scale",
+    from: "0 0 0",
+    to: "1 1 1",
+    dur: 800,
+    easing: "easeOutBack"
+  });
+
+  for (let i = 0; i < 10; i++) {
+    const bubble = document.createElement("a-sphere");
+    const startX = 0;
+    const startY = 0.16;
+    const endX = side === "left"
+      ? 0.08 + Math.random() * 0.18
+      : -0.08 - Math.random() * 0.18;
+    const endY = 0.32 + Math.random() * 0.28;
+
+    bubble.setAttribute("radius", 0.01 + Math.random() * 0.008);
+    bubble.setAttribute("color", "#ffe8a3");
+    bubble.setAttribute("position", `${startX} ${startY} 0.02`);
+    bubble.setAttribute("material", "shader: flat; opacity: 0.95");
+
+    wrap.appendChild(bubble);
+
+    bubble.setAttribute("animation__fly", {
+      property: "position",
+      from: `${startX} ${startY} 0.02`,
+      to: `${endX} ${endY} 0.10`,
+      dur: 900 + Math.floor(Math.random() * 700),
+      delay: i * 130,
+      loop: true,
+      dir: "normal",
+      easing: "easeOutCubic"
+    });
+
+    bubble.setAttribute("animation__fade", {
+      property: "material.opacity",
+      from: 0.95,
+      to: 0,
+      dur: 900 + Math.floor(Math.random() * 700),
+      delay: i * 130,
+      loop: true,
+      dir: "normal",
+      easing: "linear"
+    });
+  }
+}
 
 async function startPolaroids() {
+  if (playing) return;
+  playing = true;
+  const currentRun = ++runId;
 
+  clearAllAR();
 
-  if (
-    playing
-  ) {
+  for (let i = 0; i < images.length; i++) {
+    if (!tracking || currentRun !== runId) break;
 
-    return;
+    const img = images[i];
 
+    if (!img.complete) {
+      await new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }
+
+    if (!tracking || currentRun !== runId) break;
+
+    const card = createPolaroid(img, layouts[i], i);
+    if (card) dropCard(card, layouts[i], i);
+
+    await sleep(950);
   }
 
-
-  playing =
-    true;
-
-
-  const currentRun =
-    ++runId;
-
-
-
-
-  clearCards();
-
-
-
-
-  for (
-    let i = 0;
-    i < images.length;
-    i++
-  ) {
-
-
-    if (
-      !tracking ||
-      currentRun !== runId
-    ) {
-
-      break;
-
-    }
-
-
-
-
-    const img =
-      images[i];
-
-
-
-
-    /*
-    JEŚLI OBRAZ JESZCZE
-    SIĘ NIE ZAŁADOWAŁ
-    */
-
-
-    if (
-      !img.complete
-    ) {
-
-
-      await new Promise(
-
-        resolve => {
-
-
-          img.onload =
-            resolve;
-
-
-          img.onerror =
-            resolve;
-
-
-        }
-
-      );
-
-
-    }
-
-
-
-
-    if (
-      !tracking ||
-      currentRun !== runId
-    ) {
-
-      break;
-
-    }
-
-
-
-
-    const card =
-      createPolaroid(
-
-        img,
-
-        layouts[i],
-
-        i
-
-      );
-
-
-
-
-    if (
-      card
-    ) {
-
-
-      dropCard(
-
-        card,
-
-        layouts[i],
-
-        i,
-
-        currentRun
-
-      );
-
-
-    }
-
-
-
-
-    /*
-    CZAS MIĘDZY
-    KOLEJNYMI ZDJĘCIAMI
-
-    1100 = 1,1 sekundy
-    */
-
-
-    await sleep(
-      1100
-    );
-
+  if (tracking && currentRun === runId) {
+    await sleep(500);
+    create3DText();
+    createConfettiBurst();
+    createChampagneSide(-0.58, "left");
+    createChampagneSide(0.58, "right");
   }
 
-
-
-
-  playing =
-    false;
-
+  playing = false;
 }
 
+button.addEventListener("click", async () => {
+  startScreen.style.display = "none";
+  hint.style.display = "block";
+  await scene.systems["mindar-image-system"].start();
+});
 
+target.addEventListener("targetFound", () => {
+  if (tracking) return;
+  tracking = true;
+  hint.style.display = "none";
+  startPolaroids();
+});
 
-
-/*
-========================================
-START APARATU
-========================================
-*/
-
-
-button.addEventListener(
-
-  "click",
-
-  async () => {
-
-
-    startScreen.style.display =
-      "none";
-
-
-    hint.style.display =
-      "block";
-
-
-    await scene
-      .systems[
-        "mindar-image-system"
-      ]
-      .start();
-
-
-  }
-
-);
-
-
-
-
-/*
-========================================
-MARKER ZNALEZIONY
-========================================
-*/
-
-
-target.addEventListener(
-
-  "targetFound",
-
-  () => {
-
-
-    /*
-    JEŚLI JUŻ GO WIDZIMY,
-    NIE URUCHAMIAJ DRUGIEGO
-    POKAZU
-    */
-
-
-    if (
-      tracking
-    ) {
-
-      return;
-
-    }
-
-
-
-
-    tracking =
-      true;
-
-
-    hint.style.display =
-      "none";
-
-
-    startPolaroids();
-
-
-  }
-
-);
-
-
-
-
-/*
-========================================
-MARKER ZGUBIONY
-========================================
-*/
-
-
-target.addEventListener(
-
-  "targetLost",
-
-  () => {
-
-
-    tracking =
-      false;
-
-
-    runId++;
-
-
-    playing =
-      false;
-
-
-    clearCards();
-
-
-    hint.style.display =
-      "block";
-
-  }
-
-);
-
-
+target.addEventListener("targetLost", () => {
+  tracking = false;
+  runId++;
+  playing = false;
+  clearAllAR();
+  hint.style.display = "block";
+});
 </script>
 
-
 </body>
-
 </html>
