@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>Laura AR</title>
+
+
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+
+  <style>
+
+    html,
+    body {
+
+      margin: 0;
+      padding: 0;
+
+      width: 100%;
+      height: 100%;
+
+      overflow: hidden;
+
+      background: black;
+
+      font-family: Arial, sans-serif;
+
+    }
+
+
+    #startScreen {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 9999;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 25px;
+
+      box-sizing: border-box;
+
+      text-align: center;
+
+      color: white;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ff4fa0,
+          #805cff
+        );
+
+    }
+
+
+    #startBox {
+
+      width: 100%;
+
+      max-width: 420px;
+
+      padding: 28px;
+
+      box-sizing: border-box;
+
+      border-radius: 25px;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.15
+        );
+
+      backdrop-filter:
+        blur(10px);
+
+    }
+
+
+    #startBox h1 {
+
+      margin-top: 0;
+
+      margin-bottom: 15px;
+
+      font-size: 34px;
+
+    }
+
+
+    #startBox p {
+
+      font-size: 18px;
+
+      line-height: 1.5;
+
+    }
+
+
+    #startBtn {
+
+      margin-top: 15px;
+
+      padding: 15px 30px;
+
+      border: none;
+
+      border-radius: 50px;
+
+      background: white;
+
+      color: black;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+    }
+
+
+    #hint {
+
+      position: fixed;
+
+      left: 50%;
+
+      bottom: 20px;
+
+      transform:
+        translateX(-50%);
+
+      z-index: 9998;
+
+      display: none;
+
+      width: max-content;
+
+      max-width: 85%;
+
+      padding: 10px 18px;
+
+      box-sizing: border-box;
+
+      border-radius: 30px;
+
+      background:
+        rgba(
+          0,
+          0,
+          0,
+          0.65
+        );
+
+      color: white;
+
+      text-align: center;
+
+      font-size: 14px;
+
+    }
+
+  </style>
+
+</head>
+
+
+
+<body>
+
+
+  <!-- EKRAN STARTOWY -->
+
+
+  <div id="startScreen">
+
+
+    <div id="startBox">
+
+
+      <h1>
+        Ożyw ten album 💖
+      </h1>
+
+
+      <p>
+
+        Kliknij START AR.
+
+        <br><br>
+
+        Zezwól na dostęp do aparatu.
+
+        <br><br>
+
+        Następnie skieruj telefon
+        na całą stronę
+
+        <b>
+          „OŻYW TEN ALBUM!”
+        </b>
+
+      </p>
+
+
+      <button id="startBtn">
+
+        START AR
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+
+
+  <div id="hint">
+
+    Skieruj telefon na całą stronę i trzymaj stabilnie 📸
+
+  </div>
+
+
+
+
+  <!-- SCENA AR -->
+
+
+  <a-scene
+
+    mindar-image="
+      imageTargetSrc: ./targets.mind;
+      autoStart: false;
+      uiScanning: yes;
+      uiLoading: yes;
+    "
+
+    color-space="sRGB"
+
+    renderer="
+      colorManagement: true;
+      physicallyCorrectLights: true;
+      alpha: true;
+    "
+
+    vr-mode-ui="
+      enabled: false
+    "
+
+    device-orientation-permission-ui="
+      enabled: false
+    "
+
+    embedded
+
+  >
+
+
+
+    <!-- ZDJĘCIA -->
+
+
+    <a-assets>
+
+
+      <img
+        id="img1"
+        src="./assets/01.jpg"
+      >
+
+
+      <img
+        id="img2"
+        src="./assets/02.jpg"
+      >
+
+
+      <img
+        id="img3"
+        src="./assets/03.jpg"
+      >
+
+
+      <img
+        id="img4"
+        src="./assets/04.jpg"
+      >
+
+
+      <img
+        id="img5"
+        src="./assets/05.jpg"
+      >
+
+
+      <img
+        id="img6"
+        src="./assets/06.jpg"
+      >
+
+
+      <img
+        id="img7"
+        src="./assets/07.jpg"
+      >
+
+
+      <img
+        id="img8"
+        src="./assets/08.jpg"
+      >
+
+
+      <img
+        id="img9"
+        src="./assets/09.jpg"
+      >
+
+
+      <img
+        id="img10"
+        src="./assets/10.jpg"
+      >
+
+
+      <img
+        id="img11"
+        src="./assets/11.jpg"
+      >
+
+
+      <img
+        id="img12"
+        src="./assets/12.jpg"
+      >
+
+
+      <img
+        id="img13"
+        src="./assets/13.jpg"
+      >
+
+
+      <img
+        id="img14"
+        src="./assets/14.jpg"
+      >
+
+
+      <img
+        id="img15"
+        src="./assets/15.jpg"
+      >
+
+
+    </a-assets>
+
+
+
+
+    <!-- KAMERA -->
+
+
+    <a-camera
+
+      position="0 0 0"
+
+      look-controls="
+        enabled: false
+      "
+
+    ></a-camera>
+
+
+
+
+    <!-- MARKER -->
+
+
+    <a-entity
+
+      id="target"
+
+      mindar-image-target="
+        targetIndex: 0
+      "
+
+    >
+
+
+      <!--
+      TYLKO JEDNO ZDJĘCIE.
+      NIE MA TŁA ANI PLANSZY,
+      WIĘC FIZYCZNA KARTKA
+      POZOSTAJE WIDOCZNA.
+      -->
+
+
+      <a-image
+
+        id="photo"
+
+        position="0 0.02 0.04"
+
+        scale="0 0 0"
+
+        visible="false"
+
+        material="
+          transparent: true;
+          opacity: 1;
+          shader: flat;
+        "
+
+      ></a-image>
+
+
+    </a-entity>
+
+
+  </a-scene>
+
+
+
+
+  <script>
+
+
+    const sceneEl =
+      document.querySelector(
+        "a-scene"
+      );
+
+
+    const startBtn =
+      document.getElementById(
+        "startBtn"
+      );
+
+
+    const startScreen =
+      document.getElementById(
+        "startScreen"
+      );
+
+
+    const hint =
+      document.getElementById(
+        "hint"
+      );
+
+
+    const target =
+      document.getElementById(
+        "target"
+      );
+
+
+    const photo =
+      document.getElementById(
+        "photo"
+      );
+
+
+
+
+    const photos = [
+
+      "#img1",
+
+      "#img2",
+
+      "#img3",
+
+      "#img4",
+
+      "#img5",
+
+      "#img6",
+
+      "#img7",
+
+      "#img8",
+
+      "#img9",
+
+      "#img10",
+
+      "#img11",
+
+      "#img12",
+
+      "#img13",
+
+      "#img14",
+
+      "#img15"
+
+    ];
+
+
+
+
+    let currentPhoto = 0;
+
+
+    let slideshowTimeout = null;
+
+
+    let markerVisible = false;
+
+
+
+
+    /*
+    =====================================
+    DOPASOWANIE PROPORCJI ZDJĘCIA
+    =====================================
+
+    Kod sprawdza prawdziwą szerokość
+    i wysokość JPG.
+
+    Dzięki temu zdjęcia NIE SĄ
+    rozciągane.
+    */
+
+
+    function setOriginalProportions(
+      imageSelector
+    ) {
+
+
+      const imageId =
+        imageSelector.replace(
+          "#",
+          ""
+        );
+
+
+      const image =
+        document.getElementById(
+          imageId
+        );
+
+
+      const naturalWidth =
+        image.naturalWidth;
+
+
+      const naturalHeight =
+        image.naturalHeight;
+
+
+
+
+      if (
+        !naturalWidth ||
+        !naturalHeight
+      ) {
+
+        return;
+
+      }
+
+
+
+
+      const ratio =
+        naturalWidth /
+        naturalHeight;
+
+
+
+
+      /*
+      Maksymalny rozmiar obrazu AR.
+
+      Dzięki temu nadal widać
+      dużą część fizycznej kartki.
+      */
+
+
+      const maxWidth =
+        0.48;
+
+
+      const maxHeight =
+        0.50;
+
+
+
+
+      let width;
+
+
+      let height;
+
+
+
+
+      if (
+        ratio >= 1
+      ) {
+
+
+        /*
+        ZDJĘCIE POZIOME
+        */
+
+
+        width =
+          maxWidth;
+
+
+        height =
+          width /
+          ratio;
+
+
+        if (
+          height >
+          maxHeight
+        ) {
+
+
+          height =
+            maxHeight;
+
+
+          width =
+            height *
+            ratio;
+
+
+        }
+
+
+      }
+
+
+      else {
+
+
+        /*
+        ZDJĘCIE PIONOWE
+        */
+
+
+        height =
+          maxHeight;
+
+
+        width =
+          height *
+          ratio;
+
+
+        if (
+          width >
+          maxWidth
+        ) {
+
+
+          width =
+            maxWidth;
+
+
+          height =
+            width /
+            ratio;
+
+
+        }
+
+
+      }
+
+
+
+
+      photo.setAttribute(
+        "width",
+        width
+      );
+
+
+      photo.setAttribute(
+        "height",
+        height
+      );
+
+
+    }
+
+
+
+
+
+    /*
+    =====================================
+    POKAZANIE JEDNEGO ZDJĘCIA
+    =====================================
+    */
+
+
+    function showPhoto() {
+
+
+      if (
+        !markerVisible
+      ) {
+
+        return;
+
+      }
+
+
+
+
+      const imageSelector =
+        photos[
+          currentPhoto
+        ];
+
+
+
+
+      photo.setAttribute(
+        "src",
+        imageSelector
+      );
+
+
+
+
+      setOriginalProportions(
+        imageSelector
+      );
+
+
+
+
+      photo.setAttribute(
+        "visible",
+        true
+      );
+
+
+
+
+      /*
+      ZDJĘCIE ZACZYNA SIĘ MAŁE
+      */
+
+
+      photo.setAttribute(
+        "scale",
+        "0.18 0.18 0.18"
+      );
+
+
+
+
+      photo.setAttribute(
+        "position",
+        "0 0.02 0.03"
+      );
+
+
+
+
+      photo.setAttribute(
+        "material",
+        "opacity",
+        0
+      );
+
+
+
+
+      /*
+      ZBLIŻENIE ZDJĘCIA
+      */
+
+
+      photo.setAttribute(
+        "animation__zoom",
+        {
+
+          property:
+            "scale",
+
+          from:
+            "0.18 0.18 0.18",
+
+          to:
+            "1.15 1.15 1.15",
+
+          dur:
+            2400,
+
+          easing:
+            "easeOutCubic"
+
+        }
+      );
+
+
+
+
+      /*
+      LEKKIE PRZYSUNIĘCIE
+      W STRONĘ KAMERY
+      */
+
+
+      photo.setAttribute(
+        "animation__move",
+        {
+
+          property:
+            "position",
+
+          from:
+            "0 0.02 0.03",
+
+          to:
+            "0 0.02 0.16",
+
+          dur:
+            2400,
+
+          easing:
+            "easeOutCubic"
+
+        }
+      );
+
+
+
+
+      /*
+      PŁYNNE POJAWIENIE
+      */
+
+
+      photo.setAttribute(
+        "animation__fadein",
+        {
+
+          property:
+            "material.opacity",
+
+          from:
+            0,
+
+          to:
+            1,
+
+          dur:
+            400,
+
+          easing:
+            "linear"
+
+        }
+      );
+
+
+
+
+      /*
+      PO CHWILI ZDJĘCIE ZNIKA
+      */
+
+
+      setTimeout(
+        () => {
+
+
+          if (
+            !markerVisible
+          ) {
+
+            return;
+
+          }
+
+
+
+
+          photo.setAttribute(
+            "animation__fadeout",
+            {
+
+              property:
+                "material.opacity",
+
+              from:
+                1,
+
+              to:
+                0,
+
+              dur:
+                450,
+
+              easing:
+                "linear"
+
+            }
+          );
+
+
+        },
+
+        2600
+      );
+
+
+
+
+      /*
+      NASTĘPNE ZDJĘCIE
+      */
+
+
+      slideshowTimeout =
+        setTimeout(
+          () => {
+
+
+            if (
+              !markerVisible
+            ) {
+
+              return;
+
+            }
+
+
+
+
+            currentPhoto++;
+
+
+            if (
+              currentPhoto >=
+              photos.length
+            ) {
+
+              currentPhoto = 0;
+
+            }
+
+
+
+
+            showPhoto();
+
+
+          },
+
+          3200
+        );
+
+
+    }
+
+
+
+
+
+    /*
+    =====================================
+    START AR
+    =====================================
+    */
+
+
+    startBtn.addEventListener(
+
+      "click",
+
+      async () => {
+
+
+        startScreen.style.display =
+          "none";
+
+
+        hint.style.display =
+          "block";
+
+
+        await sceneEl
+          .systems[
+            "mindar-image-system"
+          ]
+          .start();
+
+
+      }
+
+    );
+
+
+
+
+
+    /*
+    =====================================
+    MARKER ZNALEZIONY
+    =====================================
+    */
+
+
+    target.addEventListener(
+
+      "targetFound",
+
+      () => {
+
+
+        markerVisible =
+          true;
+
+
+        hint.style.display =
+          "none";
+
+
+        clearTimeout(
+          slideshowTimeout
+        );
+
+
+        currentPhoto =
+          0;
+
+
+        showPhoto();
+
+
+      }
+
+    );
+
+
+
+
+
+    /*
+    =====================================
+    MARKER ZGUBIONY
+    =====================================
+    */
+
+
+    target.addEventListener(
+
+      "targetLost",
+
+      () => {
+
+
+        markerVisible =
+          false;
+
+
+        clearTimeout(
+          slideshowTimeout
+        );
+
+
+        photo.setAttribute(
+          "visible",
+          false
+        );
+
+
+        hint.style.display =
+          "block";
+
+
+      }
+
+    );
+
+
+  </script>
+
+
+</body>
+
+</html>
