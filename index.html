@@ -2,7 +2,6 @@
 <html lang="pl">
 
 <head>
-
 <meta charset="UTF-8">
 
 <meta
@@ -12,233 +11,140 @@
 
 <title>Laura 18 AR</title>
 
-
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-<script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.7.0/dist/aframe-extras.min.js"></script>
-
 
 <style>
 
 html,
 body {
-
   margin: 0;
-
   width: 100%;
   height: 100%;
-
   overflow: hidden;
-
   background: black !important;
-
-  font-family:
-    Arial,
-    sans-serif;
-
+  font-family: Arial, sans-serif;
 }
 
-
 a-scene {
-
   position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: transparent !important;
+  z-index: 2 !important;
+}
 
+a-scene canvas {
+  background: transparent !important;
+}
+
+video,
+video.mindar-video,
+body > video {
+  position: fixed !important;
   top: 0 !important;
   left: 0 !important;
 
   width: 100vw !important;
   height: 100vh !important;
 
-  background:
-    transparent !important;
+  object-fit: cover !important;
 
-  z-index: 2 !important;
+  z-index: 1 !important;
 
+  background: black !important;
 }
-
-
-a-scene canvas {
-
-  background:
-    transparent !important;
-
-}
-
-
-video,
-video.mindar-video,
-body > video {
-
-  position:
-    fixed !important;
-
-  top: 0 !important;
-  left: 0 !important;
-
-  width:
-    100vw !important;
-
-  height:
-    100vh !important;
-
-  object-fit:
-    cover !important;
-
-  z-index:
-    1 !important;
-
-  background:
-    black !important;
-
-}
-
-
 
 #startScreen {
-
   position: fixed;
-
   inset: 0;
 
   z-index: 9999;
 
   display: flex;
-
   justify-content: center;
-
   align-items: center;
 
   padding: 25px;
-
-  box-sizing:
-    border-box;
+  box-sizing: border-box;
 
   color: white;
-
   text-align: center;
 
   background:
-
     linear-gradient(
       180deg,
-      #dc9fb9,
-      #82618f
+      #df9fba,
+      #80608c
     );
-
 }
 
-
 #startBox {
+  max-width: 420px;
 
-  max-width:
-    420px;
+  padding: 28px;
 
-  padding:
-    28px;
-
-  box-sizing:
-    border-box;
-
-  border-radius:
-    28px;
+  border-radius: 28px;
 
   background:
-
     rgba(
       255,
       255,
       255,
       0.16
     );
-
 }
-
 
 #startBox h1 {
-
   margin-top: 0;
-
-  font-size:
-    34px;
-
+  font-size: 34px;
 }
-
 
 #startBox p {
-
-  font-size:
-    18px;
-
-  line-height:
-    1.5;
-
+  font-size: 18px;
+  line-height: 1.5;
 }
-
 
 #startBtn {
-
   border: none;
 
-  padding:
-    15px 32px;
+  padding: 15px 32px;
 
-  border-radius:
-    50px;
+  border-radius: 50px;
 
-  background:
-    white;
+  background: white;
 
-  color:
-    #222;
+  color: #222;
 
-  font-size:
-    18px;
+  font-size: 18px;
+  font-weight: bold;
 
-  font-weight:
-    bold;
-
-  cursor:
-    pointer;
-
+  cursor: pointer;
 }
 
-
 #hint {
+  position: fixed;
 
-  position:
-    fixed;
+  left: 50%;
+  bottom: 20px;
 
-  left:
-    50%;
+  transform: translateX(-50%);
 
-  bottom:
-    20px;
+  z-index: 9998;
 
-  transform:
-    translateX(-50%);
+  display: none;
 
-  z-index:
-    9998;
+  width: 82%;
 
-  display:
-    none;
+  padding: 10px 18px;
 
-  width:
-    82%;
+  box-sizing: border-box;
 
-  padding:
-    10px 18px;
-
-  box-sizing:
-    border-box;
-
-  border-radius:
-    30px;
+  border-radius: 30px;
 
   background:
-
     rgba(
       0,
       0,
@@ -246,21 +152,15 @@ body > video {
       0.58
     );
 
-  color:
-    white;
+  color: white;
 
-  text-align:
-    center;
+  text-align: center;
 
-  font-size:
-    14px;
-
+  font-size: 14px;
 }
 
 </style>
-
 </head>
-
 
 
 <body>
@@ -285,18 +185,12 @@ body > video {
       <br><br>
 
       Skieruj telefon na całą stronę
-
-      <b>
-        „OŻYW TEN ALBUM!”
-      </b>
+      <b>„OŻYW TEN ALBUM!”</b>.
 
     </p>
 
-
     <button id="startBtn">
-
       START AR
-
     </button>
 
   </div>
@@ -304,14 +198,9 @@ body > video {
 </div>
 
 
-
 <div id="hint">
-
-  Skieruj telefon na całą stronę
-  i trzymaj stabilnie 📸
-
+  Skieruj telefon na całą stronę i trzymaj stabilnie 📸
 </div>
-
 
 
 <a-scene
@@ -323,9 +212,7 @@ body > video {
     uiLoading: yes;
   "
 
-  color-space="
-    sRGB
-  "
+  color-space="sRGB"
 
   renderer="
     colorManagement: true;
@@ -375,70 +262,38 @@ body > video {
 </a-assets>
 
 
-
 <a-camera
-
-  position="
-    0 0 0
-  "
-
-  look-controls="
-    enabled: false
-  "
-
-></a-camera>
-
+  position="0 0 0"
+  look-controls="enabled: false">
+</a-camera>
 
 
 <a-entity
-
   id="target"
-
-  mindar-image-target="
-    targetIndex: 0
-  "
-
->
-
+  mindar-image-target="targetIndex: 0">
 </a-entity>
 
 
 </a-scene>
 
 
-
 <script>
 
 
 const scene =
-  document.querySelector(
-    "a-scene"
-  );
-
+  document.querySelector("a-scene");
 
 const target =
-  document.getElementById(
-    "target"
-  );
-
+  document.getElementById("target");
 
 const startScreen =
-  document.getElementById(
-    "startScreen"
-  );
-
+  document.getElementById("startScreen");
 
 const startBtn =
-  document.getElementById(
-    "startBtn"
-  );
-
+  document.getElementById("startBtn");
 
 const hint =
-  document.getElementById(
-    "hint"
-  );
-
+  document.getElementById("hint");
 
 
 const images = [
@@ -470,114 +325,76 @@ const images = [
 ];
 
 
-
 /*
-=======================================
-ROZSYPANE MIEJSCA
+================================================
+DUŻE POLAROIDY
 
-Celowo nie są idealną siatką.
-Niektóre delikatnie nachodzą.
-=======================================
+Są bliżej siebie.
+Niektóre nachodzą rogami.
+================================================
 */
-
 
 const layouts = [
 
-  {x:-0.39, y: 0.58, r:-11},
-  {x:-0.13, y: 0.61, r:  7},
-  {x: 0.18, y: 0.58, r: -5},
-  {x: 0.39, y: 0.48, r: 11},
+  {x:-0.38, y: 0.57, r:-10},
+  {x:-0.12, y: 0.59, r:  6},
+  {x: 0.14, y: 0.58, r: -6},
+  {x: 0.38, y: 0.54, r: 10},
 
-  {x:-0.43, y: 0.33, r:  9},
-  {x:-0.17, y: 0.35, r: -8},
-  {x: 0.10, y: 0.34, r:  6},
-  {x: 0.38, y: 0.26, r: -9},
+  {x:-0.40, y: 0.32, r:  8},
+  {x:-0.14, y: 0.34, r: -8},
+  {x: 0.13, y: 0.33, r:  6},
+  {x: 0.39, y: 0.30, r: -9},
 
-  {x:-0.40, y: 0.08, r: -7},
-  {x:-0.13, y: 0.10, r:  8},
-  {x: 0.15, y: 0.09, r: -6},
-  {x: 0.41, y:-0.01, r: 10},
+  {x:-0.39, y: 0.07, r: -7},
+  {x:-0.13, y: 0.08, r:  7},
+  {x: 0.14, y: 0.08, r: -6},
+  {x: 0.40, y: 0.04, r:  9},
 
-  {x:-0.42, y:-0.19, r:  8},
-  {x:-0.15, y:-0.17, r:-10},
-  {x: 0.14, y:-0.19, r:  7},
-  {x: 0.39, y:-0.25, r: -8},
+  {x:-0.39, y:-0.19, r:  8},
+  {x:-0.13, y:-0.18, r: -8},
+  {x: 0.14, y:-0.19, r:  6},
+  {x: 0.39, y:-0.22, r: -8},
 
-  {x:-0.35, y:-0.46, r:-10},
-  {x:-0.08, y:-0.48, r:  6},
-  {x: 0.20, y:-0.46, r: -7},
-  {x: 0.36, y:-0.55, r: 10}
+  {x:-0.34, y:-0.45, r:-9},
+  {x:-0.09, y:-0.47, r:  7},
+  {x: 0.17, y:-0.46, r: -7},
+  {x: 0.37, y:-0.48, r:  9}
 
 ];
 
 
+let tracking = false;
 
-let tracking =
-  false;
+let playing = false;
 
+let runId = 0;
 
-let playing =
-  false;
-
-
-let runId =
-  0;
-
-
-let cards =
-  [];
-
-
-let confettiModels =
-  [];
-
+let cards = [];
 
 
 function sleep(ms) {
 
   return new Promise(
-
     resolve =>
-
-      setTimeout(
-        resolve,
-        ms
-      )
-
+      setTimeout(resolve, ms)
   );
 
 }
 
 
-
-/*
-=======================================
-USUWANIE POLAROIDÓW
-=======================================
-*/
-
-
 function clearCards() {
 
+  cards.forEach(card => {
 
-  cards.forEach(
+    if (card.parentNode) {
 
-    card => {
-
-
-      if (
-        card.parentNode
-      ) {
-
-        card.parentNode
-          .removeChild(card);
-
-      }
-
+      card.parentNode
+        .removeChild(card);
 
     }
 
-  );
+  });
 
 
   cards = [];
@@ -585,49 +402,11 @@ function clearCards() {
 }
 
 
-
 /*
-=======================================
-USUWANIE CONFETTI
-=======================================
+================================================
+TWORZENIE POLAROIDA
+================================================
 */
-
-
-function clearConfetti() {
-
-
-  confettiModels.forEach(
-
-    model => {
-
-
-      if (
-        model.parentNode
-      ) {
-
-        model.parentNode
-          .removeChild(model);
-
-      }
-
-
-    }
-
-  );
-
-
-  confettiModels = [];
-
-}
-
-
-
-/*
-=======================================
-POLAROID
-=======================================
-*/
-
 
 function createPolaroid(
   img,
@@ -644,10 +423,7 @@ function createPolaroid(
     img.naturalHeight;
 
 
-  if (
-    !w ||
-    !h
-  ) {
+  if (!w || !h) {
 
     return null;
 
@@ -663,58 +439,49 @@ function createPolaroid(
   let photoHeight;
 
 
-
   /*
-  WIĘKSZE ZDJĘCIA
+  WIĘKSZE NIŻ WCZEŚNIEJ
   */
 
 
-  if (
-    ratio >= 1
-  ) {
-
+  if (ratio >= 1) {
 
     photoWidth =
-      0.225;
-
+      0.270;
 
     photoHeight =
-      photoWidth /
-      ratio;
-
+      photoWidth / ratio;
 
   }
-
 
   else {
 
-
     photoHeight =
-      0.225;
-
+      0.270;
 
     photoWidth =
-      photoHeight *
-      ratio;
-
+      photoHeight * ratio;
 
   }
 
+
+  /*
+  RAMKA
+  */
 
 
   const frameWidth =
 
     Math.max(
-      photoWidth + 0.035,
-      0.165
+      photoWidth + 0.040,
+      0.185
     );
 
 
   const frameHeight =
 
     photoHeight +
-    0.060;
-
+    0.070;
 
 
   const card =
@@ -723,39 +490,27 @@ function createPolaroid(
     );
 
 
-
   const z =
     0.035 +
-    index * 0.002;
-
+    index * 0.0025;
 
 
   card.setAttribute(
-
     "position",
-
     `${layout.x} ${layout.y} ${z}`
-
   );
 
 
   card.setAttribute(
-
     "rotation",
-
     `0 0 ${layout.r}`
-
   );
 
 
   card.setAttribute(
-
     "scale",
-
     "0 0 0"
-
   );
-
 
 
   /*
@@ -770,55 +525,37 @@ function createPolaroid(
 
 
   shadow.setAttribute(
-
     "width",
-
-    frameWidth +
-    0.012
-
+    frameWidth + 0.015
   );
 
 
   shadow.setAttribute(
-
     "height",
-
-    frameHeight +
-    0.012
-
+    frameHeight + 0.015
   );
 
 
   shadow.setAttribute(
-
     "color",
-
     "#000000"
-
   );
 
 
   shadow.setAttribute(
-
     "position",
-
     "0.010 -0.010 -0.004"
-
   );
 
 
   shadow.setAttribute(
-
     "material",
-
     "shader: flat; transparent: true; opacity: 0.20"
-
   );
-
 
 
   /*
-  RAMKA POLAROID
+  BIAŁA RAMKA
   */
 
 
@@ -829,49 +566,33 @@ function createPolaroid(
 
 
   frame.setAttribute(
-
     "width",
-
     frameWidth
-
   );
 
 
   frame.setAttribute(
-
     "height",
-
     frameHeight
-
   );
 
 
   frame.setAttribute(
-
     "color",
-
-    "#fffdf7"
-
+    "#fffdf8"
   );
 
 
   frame.setAttribute(
-
     "position",
-
-    "0 -0.013 0"
-
+    "0 -0.014 0"
   );
 
 
   frame.setAttribute(
-
     "material",
-
     "shader: flat"
-
   );
-
 
 
   /*
@@ -886,49 +607,33 @@ function createPolaroid(
 
 
   picture.setAttribute(
-
     "src",
-
     "#" + img.id
-
   );
 
 
   picture.setAttribute(
-
     "width",
-
     photoWidth
-
   );
 
 
   picture.setAttribute(
-
     "height",
-
     photoHeight
-
   );
 
 
   picture.setAttribute(
-
     "position",
-
-    "0 0.008 0.003"
-
+    "0 0.010 0.003"
   );
 
 
   picture.setAttribute(
-
     "material",
-
     "shader: flat"
-
   );
-
 
 
   card.appendChild(
@@ -961,13 +666,11 @@ function createPolaroid(
 }
 
 
-
 /*
-=======================================
-WPADANIE POLAROIDA
-=======================================
+================================================
+WPADANIE ZDJĘCIA
+================================================
 */
-
 
 function dropCard(
   card,
@@ -978,236 +681,67 @@ function dropCard(
 
   const zEnd =
     0.035 +
-    index * 0.002;
-
-
-  const zStart =
-    0.28;
+    index * 0.0025;
 
 
   const startY =
     layout.y +
-    0.13;
-
+    0.12;
 
 
   card.setAttribute(
-
     "position",
-
-    `${layout.x} ${startY} ${zStart}`
-
+    `${layout.x} ${startY} 0.27`
   );
 
 
   card.setAttribute(
-
     "rotation",
-
-    `0 0 ${layout.r - 10}`
-
+    `0 0 ${layout.r - 8}`
   );
 
 
   card.setAttribute(
-
     "scale",
-
-    "1.30 1.30 1.30"
-
+    "1.22 1.22 1.22"
   );
 
 
-
   card.setAttribute(
-
     "animation__drop",
-
     {
 
       property:
         "position",
 
       from:
-        `${layout.x} ${startY} ${zStart}`,
+        `${layout.x} ${startY} 0.27`,
 
       to:
         `${layout.x} ${layout.y} ${zEnd}`,
 
       dur:
-        800,
+        750,
 
       easing:
         "easeOutCubic"
 
     }
-
   );
 
 
-
   card.setAttribute(
-
     "animation__scale",
-
     {
 
       property:
         "scale",
 
       from:
-        "1.30 1.30 1.30",
+        "1.22 1.22 1.22",
 
       to:
         "1 1 1",
-
-      dur:
-        800,
-
-      easing:
-        "easeOutBack"
-
-    }
-
-  );
-
-
-
-  card.setAttribute(
-
-    "animation__rotate",
-
-    {
-
-      property:
-        "rotation",
-
-      from:
-        `0 0 ${layout.r - 10}`,
-
-      to:
-        `0 0 ${layout.r}`,
-
-      dur:
-        800,
-
-      easing:
-        "easeOutCubic"
-
-    }
-
-  );
-
-}
-
-
-
-/*
-=======================================
-TWÓJ MODEL CONFETTI 3D
-
-Używamy scene.gltf
-=======================================
-*/
-
-
-function createConfettiModel(
-  x,
-  y,
-  z,
-  scale,
-  rotation
-) {
-
-
-  const model =
-    document.createElement(
-      "a-entity"
-    );
-
-
-
-  model.setAttribute(
-
-    "gltf-model",
-
-    "url(./models/scene.gltf)"
-
-  );
-
-
-
-  model.setAttribute(
-
-    "position",
-
-    `${x} ${y} ${z}`
-
-  );
-
-
-
-  model.setAttribute(
-
-    "rotation",
-
-    `0 0 ${rotation}`
-
-  );
-
-
-
-  model.setAttribute(
-
-    "scale",
-
-    `0 0 0`
-
-  );
-
-
-
-  /*
-  ODTWARZANIE ANIMACJI
-  ZAPISANEJ W MODELU
-  */
-
-
-  model.setAttribute(
-
-    "animation-mixer",
-
-    "clip: *; loop: repeat; repetitions: Infinity; timeScale: 1"
-
-  );
-
-
-
-  target.appendChild(
-    model
-  );
-
-
-  confettiModels.push(
-    model
-  );
-
-
-
-  model.setAttribute(
-
-    "animation__appear",
-
-    {
-
-      property:
-        "scale",
-
-      from:
-        "0 0 0",
-
-      to:
-        `${scale} ${scale} ${scale}`,
 
       dur:
         750,
@@ -1216,107 +750,44 @@ function createConfettiModel(
         "easeOutBack"
 
     }
-
   );
 
 
-  return model;
+  card.setAttribute(
+    "animation__rotation",
+    {
 
-}
+      property:
+        "rotation",
 
+      from:
+        `0 0 ${layout.r - 8}`,
 
+      to:
+        `0 0 ${layout.r}`,
 
-/*
-=======================================
-FINAŁ CONFETTI
+      dur:
+        750,
 
-3 INSTANCJE TEGO SAMEGO MODELU
-=======================================
-*/
+      easing:
+        "easeOutCubic"
 
-
-async function launchConfetti() {
-
-
-  if (
-    !tracking
-  ) {
-
-    return;
-
-  }
-
-
-
-  createConfettiModel(
-
-    -0.30,
-    0.18,
-    0.18,
-
-    0.24,
-
-    -10
-
-  );
-
-
-
-  await sleep(
-    250
-  );
-
-
-
-  createConfettiModel(
-
-    0.30,
-    0.18,
-    0.19,
-
-    0.24,
-
-    10
-
-  );
-
-
-
-  await sleep(
-    250
-  );
-
-
-
-  createConfettiModel(
-
-    0,
-    0.50,
-    0.20,
-
-    0.30,
-
-    0
-
+    }
   );
 
 }
 
 
-
 /*
-=======================================
-START POLAROIDÓW
-=======================================
+================================================
+START ZDJĘĆ
+================================================
 */
-
 
 async function startPolaroids() {
 
 
-  if (
-    playing
-  ) {
+  if (playing) {
 
     return;
 
@@ -1331,12 +802,7 @@ async function startPolaroids() {
     ++runId;
 
 
-
   clearCards();
-
-
-  clearConfetti();
-
 
 
   for (
@@ -1356,37 +822,25 @@ async function startPolaroids() {
     }
 
 
-
     const img =
       images[i];
 
 
-
-    if (
-      !img.complete
-    ) {
-
+    if (!img.complete) {
 
       await new Promise(
-
         resolve => {
-
 
           img.onload =
             resolve;
 
-
           img.onerror =
             resolve;
 
-
         }
-
       );
 
-
     }
-
 
 
     if (
@@ -1399,71 +853,33 @@ async function startPolaroids() {
     }
 
 
-
     const card =
       createPolaroid(
-
         img,
-
         layouts[i],
-
         i
-
       );
 
 
-
-    if (
-      card
-    ) {
-
+    if (card) {
 
       dropCard(
-
         card,
-
         layouts[i],
-
         i
-
       );
-
 
     }
 
 
-
     /*
-    około 0.8 sekundy
-    między zdjęciami
+    SZYBCIEJ NIŻ WCZEŚNIEJ
     */
 
 
     await sleep(
-      800
+      650
     );
-
-  }
-
-
-
-  /*
-  KONIEC ZDJĘĆ
-  */
-
-
-  if (
-    tracking &&
-    currentRun === runId
-  ) {
-
-
-    await sleep(
-      800
-    );
-
-
-    launchConfetti();
 
   }
 
@@ -1474,20 +890,15 @@ async function startPolaroids() {
 }
 
 
-
 /*
-=======================================
-START APARATU
-=======================================
+================================================
+START AR
+================================================
 */
 
-
 startBtn.addEventListener(
-
   "click",
-
   async () => {
-
 
     startScreen.style.display =
       "none";
@@ -1503,30 +914,22 @@ startBtn.addEventListener(
       ]
       .start();
 
-
   }
-
 );
 
 
-
 /*
-=======================================
+================================================
 MARKER ZNALEZIONY
-=======================================
+================================================
 */
 
-
 target.addEventListener(
-
   "targetFound",
-
   () => {
 
 
-    if (
-      tracking
-    ) {
+    if (tracking) {
 
       return;
 
@@ -1544,22 +947,17 @@ target.addEventListener(
     startPolaroids();
 
   }
-
 );
 
 
-
 /*
-=======================================
+================================================
 MARKER ZGUBIONY
-=======================================
+================================================
 */
 
-
 target.addEventListener(
-
   "targetLost",
-
   () => {
 
 
@@ -1577,27 +975,14 @@ target.addEventListener(
     clearCards();
 
 
-    clearConfetti();
-
-
     hint.style.display =
       "block";
 
   }
-
 );
 
 
 </script>
-
-
-
-<!--
-Confetti 3D:
-"Confetti" by jhsuuu / Sketchfab
-License: CC BY 4.0
--->
-
 
 </body>
 
