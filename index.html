@@ -14,117 +14,6 @@
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script>
-AFRAME.registerComponent("gltf-clip-player", {
-
-  schema: {
-    clip: {
-      type: "string",
-      default: "Main"
-    }
-  },
-
-  init: function () {
-
-    this.mixer = null;
-    this.action = null;
-    this.model = null;
-    this.playing = false;
-
-    this.el.addEventListener(
-      "model-loaded",
-      (event) => {
-
-        this.model = event.detail.model;
-
-        const animations =
-          this.model.animations || [];
-
-        if (!animations.length) {
-          console.log("Brak animacji w modelu GLTF");
-          return;
-        }
-
-        let clip =
-          THREE.AnimationClip.findByName(
-            animations,
-            this.data.clip
-          );
-
-        if (!clip) {
-          clip = animations[0];
-        }
-
-        this.mixer =
-          new THREE.AnimationMixer(
-            this.model
-          );
-
-        this.action =
-          this.mixer.clipAction(
-            clip
-          );
-
-        this.action.setLoop(
-          THREE.LoopRepeat,
-          Infinity
-        );
-
-        this.action.clampWhenFinished =
-          false;
-
-        console.log(
-          "Animacja gotowa:",
-          clip.name
-        );
-
-      }
-    );
-
-  },
-
-  playAnimation: function () {
-
-    if (!this.action) {
-      return;
-    }
-
-    this.action.stop();
-    this.action.reset();
-    this.action.play();
-
-    this.playing = true;
-
-  },
-
-  stopAnimation: function () {
-
-    if (this.action) {
-      this.action.stop();
-    }
-
-    this.playing = false;
-
-  },
-
-  tick: function (time, delta) {
-
-    if (
-      this.mixer &&
-      this.playing
-    ) {
-
-      this.mixer.update(
-        delta / 1000
-      );
-
-    }
-
-  }
-
-});
-</script>
-
 <style>
 
 html,
@@ -189,18 +78,12 @@ body > video {
 
 #startBox {
   max-width: 420px;
-
   padding: 28px;
 
   border-radius: 28px;
 
   background:
-    rgba(
-      255,
-      255,
-      255,
-      0.16
-    );
+    rgba(255,255,255,0.16);
 }
 
 #startBox h1 {
@@ -251,12 +134,7 @@ body > video {
   border-radius: 30px;
 
   background:
-    rgba(
-      0,
-      0,
-      0,
-      0.58
-    );
+    rgba(0,0,0,0.58);
 
   color: white;
 
@@ -354,11 +232,6 @@ body > video {
   <img id="img19" src="./assets/19.jpg">
   <img id="img20" src="./assets/20.jpg">
 
-  <a-asset-item
-    id="confettiModel"
-    src="./models/scene.gltf">
-  </a-asset-item>
-
 </a-assets>
 
 
@@ -370,19 +243,7 @@ body > video {
 
 <a-entity
   id="target"
-  mindar-image-target="targetIndex: 0"
->
-
-  <a-entity
-    id="confetti"
-    gltf-model="#confettiModel"
-    gltf-clip-player="clip: Main"
-    position="0 0.16 0.22"
-    rotation="0 0 0"
-    scale="0 0 0"
-    visible="false">
-  </a-entity>
-
+  mindar-image-target="targetIndex: 0">
 </a-entity>
 
 
@@ -390,6 +251,7 @@ body > video {
 
 
 <script>
+
 
 const scene =
   document.querySelector("a-scene");
@@ -405,9 +267,6 @@ const startBtn =
 
 const hint =
   document.getElementById("hint");
-
-const confetti =
-  document.getElementById("confetti");
 
 
 const images = [
@@ -438,6 +297,12 @@ const images = [
 
 ];
 
+
+/*
+====================================
+ROZMIESZCZENIE 20 POLAROIDÓW
+====================================
+*/
 
 const layouts = [
 
@@ -470,12 +335,11 @@ const layouts = [
 
 
 let tracking = false;
-
 let playing = false;
-
 let runId = 0;
 
 let cards = [];
+let confettiPieces = [];
 
 
 function sleep(ms) {
@@ -488,14 +352,19 @@ function sleep(ms) {
 }
 
 
+/*
+====================================
+CZYSZCZENIE
+====================================
+*/
+
 function clearCards() {
 
   cards.forEach(card => {
 
     if (card.parentNode) {
 
-      card.parentNode
-        .removeChild(card);
+      card.parentNode.removeChild(card);
 
     }
 
@@ -506,38 +375,27 @@ function clearCards() {
 }
 
 
-function resetConfetti() {
+function clearConfetti() {
 
-  confetti.removeAttribute(
-    "animation__show"
-  );
+  confettiPieces.forEach(piece => {
 
-  const player =
-    confetti.components[
-      "gltf-clip-player"
-    ];
+    if (piece.parentNode) {
 
-  if (player) {
+      piece.parentNode.removeChild(piece);
 
-    player.stopAnimation();
+    }
 
-  }
+  });
 
-  confetti.setAttribute(
-    "visible",
-    false
-  );
-
-  confetti.setAttribute(
-    "scale",
-    "0 0 0"
-  );
+  confettiPieces = [];
 
 }
 
 
 /*
-TWORZENIE POLAROIDA
+====================================
+POLAROID
+====================================
 */
 
 function createPolaroid(
@@ -545,7 +403,6 @@ function createPolaroid(
   layout,
   index
 ) {
-
 
   const w =
     img.naturalWidth;
@@ -566,9 +423,12 @@ function createPolaroid(
 
 
   let photoWidth;
-
   let photoHeight;
 
+
+  /*
+  DUŻE ZDJĘCIA
+  */
 
   if (ratio >= 1) {
 
@@ -634,6 +494,10 @@ function createPolaroid(
   );
 
 
+  /*
+  CIEŃ
+  */
+
   const shadow =
     document.createElement(
       "a-plane"
@@ -669,6 +533,10 @@ function createPolaroid(
     "shader: flat; transparent: true; opacity: 0.20"
   );
 
+
+  /*
+  BIAŁA RAMKA
+  */
 
   const frame =
     document.createElement(
@@ -706,6 +574,10 @@ function createPolaroid(
   );
 
 
+  /*
+  ZDJĘCIE
+  */
+
   const picture =
     document.createElement(
       "a-image"
@@ -742,25 +614,13 @@ function createPolaroid(
   );
 
 
-  card.appendChild(
-    shadow
-  );
+  card.appendChild(shadow);
+  card.appendChild(frame);
+  card.appendChild(picture);
 
-  card.appendChild(
-    frame
-  );
+  target.appendChild(card);
 
-  card.appendChild(
-    picture
-  );
-
-  target.appendChild(
-    card
-  );
-
-  cards.push(
-    card
-  );
+  cards.push(card);
 
 
   return card;
@@ -769,7 +629,9 @@ function createPolaroid(
 
 
 /*
+====================================
 WPADANIE POLAROIDA
+====================================
 */
 
 function dropCard(
@@ -778,15 +640,13 @@ function dropCard(
   index
 ) {
 
-
   const zEnd =
     0.035 +
     index * 0.0025;
 
 
   const startY =
-    layout.y +
-    0.12;
+    layout.y + 0.12;
 
 
   card.setAttribute(
@@ -879,73 +739,575 @@ function dropCard(
 
 
 /*
-CONFETTI
+====================================
+KOLOROWE CONFETTI
+====================================
 */
 
-async function showConfetti() {
+function launchConfetti() {
 
-  if (!tracking) {
-    return;
-  }
+  clearConfetti();
 
 
-  resetConfetti();
+  const colors = [
 
+    "#ff1744",
+    "#ff9100",
+    "#ffd600",
+    "#00e676",
+    "#00b0ff",
+    "#651fff",
+    "#d500f9",
+    "#ff4081",
+    "#ffffff",
+    "#00e5ff"
 
-  confetti.setAttribute(
-    "visible",
-    true
-  );
-
-
-  confetti.setAttribute(
-    "scale",
-    "0.01 0.01 0.01"
-  );
-
-
-  confetti.setAttribute(
-    "animation__show",
-    {
-
-      property:
-        "scale",
-
-      from:
-        "0.01 0.01 0.01",
-
-      to:
-        "0.65 0.65 0.65",
-
-      dur:
-        900,
-
-      easing:
-        "easeOutBack"
-
-    }
-  );
+  ];
 
 
   /*
-  DAJ MODELOWI CHWILĘ
-  NA PEŁNE ZAŁADOWANIE
+  100 ELEMENTÓW
   */
 
-  await sleep(
-    250
+  for (
+    let i = 0;
+    i < 100;
+    i++
+  ) {
+
+
+    const piece =
+      document.createElement(
+        i % 4 === 0
+          ? "a-box"
+          : "a-plane"
+      );
+
+
+    const color =
+
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    /*
+    START W ŚRODKU
+    */
+
+    const startX =
+      (Math.random() - 0.5) *
+      0.18;
+
+
+    const startY =
+      0.10 +
+      Math.random() *
+      0.12;
+
+
+    const startZ =
+      0.20 +
+      Math.random() *
+      0.08;
+
+
+    /*
+    KONIEC
+    */
+
+    const endX =
+      (Math.random() - 0.5) *
+      1.45;
+
+
+    const endY =
+      -0.70 +
+      Math.random() *
+      1.75;
+
+
+    const endZ =
+      0.04 +
+      Math.random() *
+      0.25;
+
+
+    /*
+    ROZMIARY
+    */
+
+    const size =
+      0.012 +
+      Math.random() *
+      0.022;
+
+
+    if (
+      piece.tagName.toLowerCase() ===
+      "a-box"
+    ) {
+
+      piece.setAttribute(
+        "width",
+        size
+      );
+
+      piece.setAttribute(
+        "height",
+        size * 2
+      );
+
+      piece.setAttribute(
+        "depth",
+        size * 0.35
+      );
+
+    }
+
+    else {
+
+      piece.setAttribute(
+        "width",
+        size
+      );
+
+      piece.setAttribute(
+        "height",
+        size * 2.1
+      );
+
+    }
+
+
+    piece.setAttribute(
+      "color",
+      color
+    );
+
+
+    piece.setAttribute(
+      "material",
+      "shader: flat; transparent: true; opacity: 1; side: double"
+    );
+
+
+    piece.setAttribute(
+      "position",
+      `${startX} ${startY} ${startZ}`
+    );
+
+
+    const rx =
+      Math.random() *
+      360;
+
+
+    const ry =
+      Math.random() *
+      360;
+
+
+    const rz =
+      Math.random() *
+      360;
+
+
+    piece.setAttribute(
+      "rotation",
+      `${rx} ${ry} ${rz}`
+    );
+
+
+    piece.setAttribute(
+      "scale",
+      "0 0 0"
+    );
+
+
+    target.appendChild(
+      piece
+    );
+
+
+    confettiPieces.push(
+      piece
+    );
+
+
+    /*
+    RÓŻNE OPÓŹNIENIA
+    */
+
+    const delay =
+      Math.random() *
+      700;
+
+
+    const duration =
+      2200 +
+      Math.random() *
+      1800;
+
+
+    /*
+    WYSTRZAŁ
+    */
+
+    piece.setAttribute(
+      "animation__move",
+      {
+
+        property:
+          "position",
+
+        from:
+          `${startX} ${startY} ${startZ}`,
+
+        to:
+          `${endX} ${endY} ${endZ}`,
+
+        dur:
+          duration,
+
+        delay:
+          delay,
+
+        easing:
+          "easeOutCubic"
+
+      }
+    );
+
+
+    /*
+    POJAWIENIE
+    */
+
+    piece.setAttribute(
+      "animation__grow",
+      {
+
+        property:
+          "scale",
+
+        from:
+          "0 0 0",
+
+        to:
+          "1 1 1",
+
+        dur:
+          250,
+
+        delay:
+          delay,
+
+        easing:
+          "easeOutBack"
+
+      }
+    );
+
+
+    /*
+    OBRÓT
+    */
+
+    piece.setAttribute(
+      "animation__spin",
+      {
+
+        property:
+          "rotation",
+
+        from:
+          `${rx} ${ry} ${rz}`,
+
+        to:
+          `${rx + 720} ${ry + 540} ${rz + 1080}`,
+
+        dur:
+          duration,
+
+        delay:
+          delay,
+
+        easing:
+          "linear"
+
+      }
+    );
+
+
+    /*
+    POWOLNE ZNIKANIE
+    */
+
+    piece.setAttribute(
+      "animation__fade",
+      {
+
+        property:
+          "material.opacity",
+
+        from:
+          1,
+
+        to:
+          0,
+
+        dur:
+          900,
+
+        delay:
+          delay +
+          duration -
+          850,
+
+        easing:
+          "linear"
+
+      }
+    );
+
+  }
+
+
+  /*
+  DRUGI WYSTRZAŁ
+  */
+
+  setTimeout(
+    () => {
+
+      if (tracking) {
+
+        launchSecondBurst();
+
+      }
+
+    },
+    1100
   );
 
-
-  const player =
-    confetti.components[
-      "gltf-clip-player"
-    ];
+}
 
 
-  if (player) {
+/*
+====================================
+DRUGA FALA CONFETTI
+====================================
+*/
 
-    player.playAnimation();
+function launchSecondBurst() {
+
+
+  const colors = [
+
+    "#ff1744",
+    "#ffd600",
+    "#00e676",
+    "#00b0ff",
+    "#d500f9",
+    "#ff4081",
+    "#ffffff"
+
+  ];
+
+
+  for (
+    let i = 0;
+    i < 45;
+    i++
+  ) {
+
+
+    const piece =
+      document.createElement(
+        "a-plane"
+      );
+
+
+    const side =
+      i % 2 === 0
+        ? -1
+        : 1;
+
+
+    const startX =
+      side * 0.42;
+
+
+    const startY =
+      -0.20 +
+      Math.random() *
+      0.25;
+
+
+    const startZ =
+      0.16;
+
+
+    const endX =
+      startX +
+      side *
+      (
+        0.20 +
+        Math.random() *
+        0.40
+      );
+
+
+    const endY =
+      0.20 +
+      Math.random() *
+      0.85;
+
+
+    const endZ =
+      0.05 +
+      Math.random() *
+      0.20;
+
+
+    const size =
+      0.014 +
+      Math.random() *
+      0.020;
+
+
+    piece.setAttribute(
+      "width",
+      size
+    );
+
+
+    piece.setAttribute(
+      "height",
+      size * 2
+    );
+
+
+    piece.setAttribute(
+      "color",
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ]
+    );
+
+
+    piece.setAttribute(
+      "material",
+      "shader: flat; transparent: true; opacity: 1; side: double"
+    );
+
+
+    piece.setAttribute(
+      "position",
+      `${startX} ${startY} ${startZ}`
+    );
+
+
+    target.appendChild(
+      piece
+    );
+
+
+    confettiPieces.push(
+      piece
+    );
+
+
+    const delay =
+      Math.random() *
+      450;
+
+
+    piece.setAttribute(
+      "animation__move",
+      {
+
+        property:
+          "position",
+
+        from:
+          `${startX} ${startY} ${startZ}`,
+
+        to:
+          `${endX} ${endY} ${endZ}`,
+
+        dur:
+          1800 +
+          Math.random() *
+          900,
+
+        delay:
+          delay,
+
+        easing:
+          "easeOutCubic"
+
+      }
+    );
+
+
+    piece.setAttribute(
+      "animation__spin",
+      {
+
+        property:
+          "rotation",
+
+        from:
+          "0 0 0",
+
+        to:
+          "360 720 720",
+
+        dur:
+          2200,
+
+        delay:
+          delay,
+
+        easing:
+          "linear"
+
+      }
+    );
+
+
+    piece.setAttribute(
+      "animation__fade",
+      {
+
+        property:
+          "material.opacity",
+
+        from:
+          1,
+
+        to:
+          0,
+
+        dur:
+          700,
+
+        delay:
+          delay + 1600,
+
+        easing:
+          "linear"
+
+      }
+    );
 
   }
 
@@ -953,7 +1315,9 @@ async function showConfetti() {
 
 
 /*
+====================================
 START POLAROIDÓW
+====================================
 */
 
 async function startPolaroids() {
@@ -975,8 +1339,7 @@ async function startPolaroids() {
 
 
   clearCards();
-
-  resetConfetti();
+  clearConfetti();
 
 
   for (
@@ -1046,6 +1409,10 @@ async function startPolaroids() {
     }
 
 
+    /*
+    KOLEJNE ZDJĘCIE
+    */
+
     await sleep(
       650
     );
@@ -1053,16 +1420,22 @@ async function startPolaroids() {
   }
 
 
+  /*
+  PO OSTATNIM ZDJĘCIU
+  */
+
   if (
     tracking &&
     currentRun === runId
   ) {
 
+
     await sleep(
       800
     );
 
-    await showConfetti();
+
+    launchConfetti();
 
   }
 
@@ -1074,12 +1447,15 @@ async function startPolaroids() {
 
 
 /*
+====================================
 START AR
+====================================
 */
 
 startBtn.addEventListener(
   "click",
   async () => {
+
 
     startScreen.style.display =
       "none";
@@ -1100,7 +1476,9 @@ startBtn.addEventListener(
 
 
 /*
+====================================
 MARKER ZNALEZIONY
+====================================
 */
 
 target.addEventListener(
@@ -1130,7 +1508,9 @@ target.addEventListener(
 
 
 /*
+====================================
 MARKER ZGUBIONY
+====================================
 */
 
 target.addEventListener(
@@ -1152,7 +1532,7 @@ target.addEventListener(
     clearCards();
 
 
-    resetConfetti();
+    clearConfetti();
 
 
     hint.style.display =
