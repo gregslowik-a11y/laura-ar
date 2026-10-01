@@ -13,7 +13,117 @@
 
 <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.7.0/dist/aframe-extras.min.js"></script>
+
+<script>
+AFRAME.registerComponent("gltf-clip-player", {
+
+  schema: {
+    clip: {
+      type: "string",
+      default: "Main"
+    }
+  },
+
+  init: function () {
+
+    this.mixer = null;
+    this.action = null;
+    this.model = null;
+    this.playing = false;
+
+    this.el.addEventListener(
+      "model-loaded",
+      (event) => {
+
+        this.model = event.detail.model;
+
+        const animations =
+          this.model.animations || [];
+
+        if (!animations.length) {
+          console.log("Brak animacji w modelu GLTF");
+          return;
+        }
+
+        let clip =
+          THREE.AnimationClip.findByName(
+            animations,
+            this.data.clip
+          );
+
+        if (!clip) {
+          clip = animations[0];
+        }
+
+        this.mixer =
+          new THREE.AnimationMixer(
+            this.model
+          );
+
+        this.action =
+          this.mixer.clipAction(
+            clip
+          );
+
+        this.action.setLoop(
+          THREE.LoopRepeat,
+          Infinity
+        );
+
+        this.action.clampWhenFinished =
+          false;
+
+        console.log(
+          "Animacja gotowa:",
+          clip.name
+        );
+
+      }
+    );
+
+  },
+
+  playAnimation: function () {
+
+    if (!this.action) {
+      return;
+    }
+
+    this.action.stop();
+    this.action.reset();
+    this.action.play();
+
+    this.playing = true;
+
+  },
+
+  stopAnimation: function () {
+
+    if (this.action) {
+      this.action.stop();
+    }
+
+    this.playing = false;
+
+  },
+
+  tick: function (time, delta) {
+
+    if (
+      this.mixer &&
+      this.playing
+    ) {
+
+      this.mixer.update(
+        delta / 1000
+      );
+
+    }
+
+  }
+
+});
+</script>
 
 <style>
 
@@ -79,6 +189,7 @@ body > video {
 
 #startBox {
   max-width: 420px;
+
   padding: 28px;
 
   border-radius: 28px;
@@ -265,8 +376,9 @@ body > video {
   <a-entity
     id="confetti"
     gltf-model="#confettiModel"
-    animation-mixer="clip: Main; loop: repeat"
-    position="0 0.18 0.20"
+    gltf-clip-player="clip: Main"
+    position="0 0.16 0.22"
+    rotation="0 0 0"
     scale="0 0 0"
     visible="false">
   </a-entity>
@@ -278,7 +390,6 @@ body > video {
 
 
 <script>
-
 
 const scene =
   document.querySelector("a-scene");
@@ -327,10 +438,6 @@ const images = [
 
 ];
 
-
-/*
-DUŻE POLAROIDY
-*/
 
 const layouts = [
 
@@ -404,6 +511,17 @@ function resetConfetti() {
   confetti.removeAttribute(
     "animation__show"
   );
+
+  const player =
+    confetti.components[
+      "gltf-clip-player"
+    ];
+
+  if (player) {
+
+    player.stopAnimation();
+
+  }
 
   confetti.setAttribute(
     "visible",
@@ -761,15 +879,13 @@ function dropCard(
 
 
 /*
-URUCHOMIENIE CONFETTI
+CONFETTI
 */
 
 async function showConfetti() {
 
   if (!tracking) {
-
     return;
-
   }
 
 
@@ -799,7 +915,7 @@ async function showConfetti() {
         "0.01 0.01 0.01",
 
       to:
-        "0.40 0.40 0.40",
+        "0.65 0.65 0.65",
 
       dur:
         900,
@@ -809,6 +925,29 @@ async function showConfetti() {
 
     }
   );
+
+
+  /*
+  DAJ MODELOWI CHWILĘ
+  NA PEŁNE ZAŁADOWANIE
+  */
+
+  await sleep(
+    250
+  );
+
+
+  const player =
+    confetti.components[
+      "gltf-clip-player"
+    ];
+
+
+  if (player) {
+
+    player.playAnimation();
+
+  }
 
 }
 
@@ -923,7 +1062,7 @@ async function startPolaroids() {
       800
     );
 
-    showConfetti();
+    await showConfetti();
 
   }
 
